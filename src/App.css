@@ -1,3 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900;1,100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .App {
   text-align: center;
 }
@@ -26,6 +34,16 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.grid-container {
+  flex: 1; /* Take up all available space */
+}
+
+.grid {
+  height: 100%; /* Full height of the container */
+  width: 100%; /* Full width of the container */
+  display: grid;
 }
 
 @keyframes App-logo-spin {
