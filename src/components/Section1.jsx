@@ -32,7 +32,7 @@ const Section1 = () => {
                     <p className="font-space-grotesk font-bold text-6xl mt-2 text-shadow-xl">
                         I'm Paul San Diego
                     </p>
-                    <p className="font-bold text-xl mt-2 text-shadow-xl">
+                    <p className="font-bold text-xl mt-3 text-shadow-xl">
                         | PAL Leader @ KCL | Website Manager | 2nd Year CS Student |
                     </p>
                 </div>

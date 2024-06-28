@@ -8,13 +8,14 @@ const BottomLogos = () => {
       <div className="container mx-auto flex justify-center items-center">
         <div className="flex space-x-4 items-center">
           <button className="flex items-center bg-transparent text-white px-4 py-2 rounded-md hover:bg-custom-accent hover:text-custom-accent_main transition duration-200">
-            <FontAwesomeIcon icon={faGithub} className="text-4xl mr-0" />
+            <a href="https://www.linkedin.com/in/paul-san-diego/" target="_blank">
+              <FontAwesomeIcon icon={faGithub} className="text-4xl mr-0" />
+            </a>
           </button>
           <button className="flex items-center bg-transparent text-white px-4 py-2 rounded-md hover:bg-custom-accent hover:text-custom-accent_main transition duration-200">
-            <FontAwesomeIcon icon={faLinkedin} className="text-4xl mr-0" />
-          </button>
-          <button className="flex items-center bg-transparent text-white px-4 py-2 rounded-md hover:bg-custom-accent hover:text-custom-accent_main transition duration-200">
-            <FontAwesomeIcon icon={faReadme} className="text-4xl mr-0" />
+            <a href="https://www.linkedin.com/in/paul-san-diego/" target="_blank">
+              <FontAwesomeIcon icon={faLinkedin} className="text-4xl mr-0" />
+            </a>
           </button>
         </div>
       </div>
