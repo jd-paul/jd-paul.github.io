@@ -32,7 +32,7 @@ const responsive = {
 
 const Slider = () => {
     return (
-        <div className="w-4/5 m-auto font-work-sans">
+        <div className="w-full m-auto font-work-sans">
             <div className="mt-4">
                 <Carousel
                     arrows={false}

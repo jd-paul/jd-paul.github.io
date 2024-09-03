@@ -1,6 +1,6 @@
 import React from 'react';
 import NavBar from "./NavBar";
-import Selfie from '../assets/img/img_profile.jpg';
+import Selfie from '../assets/img/img_profile.png';
 import Concrete from '../assets/img/img_working.jpg';
 import BottomLogos from './BottomLogos';
 
