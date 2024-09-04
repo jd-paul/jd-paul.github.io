@@ -6,7 +6,7 @@ const Section2 = () => {
   return (
     <div id="aboutSection">
       <div className="flex flex-col gap-1 w-full max-w-[100rem] mx-auto">
-        <div className="relative flex flex-col font-work-sans items-stretch bg-red-white py-16 px-4">
+        <div className="relative flex flex-col font-work-sans items-stretch bg-red-white py-16">
           <span className="text-center font-bold text-custom-accent_alt text-2xl leading-tight block tracking-wider">
             ə'bout
           </span>

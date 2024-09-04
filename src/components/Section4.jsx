@@ -32,13 +32,13 @@ const Section4 = () => {
 
     return (
         <div>
-            <div className="relative flex font-work-sans items-stretch justify-center bg-neutral-100 py-16 px-4">
-                <div className="flex flex-col gap-1 w-full max-w-[100rem] mx-6">
+            <div className="relative flex font-work-sans items-stretch justify-center bg-neutral-100 py-16">
+                <div className="flex flex-col w-full max-w-[100rem] mx-6">
                     <span className="text-center font-semibold text-custom-dark_alt_light text-4xl leading-tight block tracking-tighter">
                         My projects.
                     </span>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
                         {projects.map((project, index) => (
                             <div key={index} className="bg-white shadow-md rounded-lg overflow-hidden">
                                 {project.proj_img && (
