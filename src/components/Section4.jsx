@@ -9,21 +9,21 @@ import kcltech from '../assets/img/img_kcl-tech.png';
 
 const Section4 = () => {
     const projects = [
-        { 
-            title: 'Productivity App', 
-            description: 'A productivity app developed through a MERN stack. Gamifies productivity through 2-bit elements.', 
+        {
+            title: 'Productivity App',
+            description: 'A productivity app developed through a MERN stack. Gamifies productivity through 2-bit elements.',
             proj_img: productivityImage,
             project_link: 'https://github.com/WMK15/EXPerience',
         },
-        { 
-            title: 'KCL Tech', 
-            description: "Managed and designed the website of KCL Tech, one of London's most popular technology societies for students.", 
+        {
+            title: 'KCL Tech',
+            description: "Managed and designed the website of KCL Tech, one of London's most popular technology societies for students.",
             proj_img: kcltech,
             project_link: 'https://www.kcltech.co.uk/',
         },
-        { 
-            title: 'London Safety app', 
-            description: 'Created a hackathon output an app that helps users stay safe and notified about nearby crimes in London.', 
+        {
+            title: 'London Safety app',
+            description: 'Created a hackathon output an app that helps users stay safe and notified about nearby crimes in London.',
             proj_img: safetyImage,
             project_link: 'https://github.com/jd-paul/FirstYear-Hackathon',
         },
@@ -34,7 +34,8 @@ const Section4 = () => {
         <div>
             <div className="relative flex font-work-sans items-stretch justify-center bg-neutral-100 py-16">
                 <div className="flex flex-col w-full max-w-[100rem] mx-6">
-                    <span className="text-center font-semibold text-custom-dark_alt_light text-4xl leading-tight block tracking-tighter">
+
+                    <span className="text-center font-semibold text-custom-dark_alt_light text-3xl md:text-4xl leading-tight block tracking-tighter">
                         My projects.
                     </span>
 
@@ -43,9 +44,9 @@ const Section4 = () => {
                             <div key={index} className="bg-white shadow-md rounded-lg overflow-hidden">
                                 {project.proj_img && (
                                     <div className="w-full h-64 overflow-hidden">
-                                        <img 
-                                            src={project.proj_img} 
-                                            alt={project.title} 
+                                        <img
+                                            src={project.proj_img}
+                                            alt={project.title}
                                             className="w-full h-full object-cover"
                                         />
                                     </div>
