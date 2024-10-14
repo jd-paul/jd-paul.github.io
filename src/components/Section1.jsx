@@ -21,18 +21,18 @@ const Section1 = () => {
                 <img
                     src={Selfie}
                     alt="Selfie"
-                    className="rounded-md h-64 object-cover mb-4"
+                    className="rounded-md h-48 md:h-64 object-cover mb-4"
                 />
 
                 {/* Text content */}
                 <div className="text-white text-center px-6">
-                    <span className="font-space-grotesk font-bold text-custom-accent_main text-3xl leading-tight block">
+                    <span className="font-space-grotesk font-bold text-custom-accent_main md:text-4xl text-3xl leading-tight block">
                         Hej!
                     </span>
-                    <p className="font-space-grotesk font-bold text-6xl mt-2 text-shadow-xl">
+                    <p className="font-space-grotesk font-bold md:text-5xl text-4xl mt-[0.5rem] text-shadow-xl">
                         I'm Paul San Diego
                     </p>
-                    <p className="font-bold text-xl mt-3 text-shadow-xl">
+                    <p className="font-bold text-xl mt-[0.1rem] text-shadow-xl">
                         | PAL Leader @ KCL | Website Manager | 2nd Year CS Student |
                     </p>
                 </div>
