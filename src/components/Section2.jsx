@@ -53,13 +53,16 @@ const Section2 = () => {
                   </span>
                   <ul className="ml-[0.5rem]">
                     <li className="">
-                      • Software enginner
-                    </li>
-                    <li className="">
                       • Website manager of KCL Tech
                     </li>
                     <li className="">
                       • Maths and programming tutor
+                    </li>
+                    <li className="">
+                      • King's Labs Pro Bono Software Engineer
+                    </li>
+                    <li className="">
+                      • Voiz Academy Data Analyst Intern
                     </li>
                   </ul>
                 </p>
