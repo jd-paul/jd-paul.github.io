@@ -5,19 +5,19 @@ import { faLink } from '@fortawesome/free-solid-svg-icons';
 import productivityImage from '../assets/img/img_productivity-app.png';
 import safetyImage from '../assets/img/img_safety-app.png';
 import kcltech from '../assets/img/img_kcl-tech.png';
-
+import codingTutors from '../assets/img/img_coding-tutors.png';
 
 const Section4 = () => {
     const projects = [
         {
-            title: 'Productivity App',
-            description: 'A productivity app developed through a MERN stack. Gamifies productivity through 2-bit elements.',
+            title: 'Gamified Productivity App',
+            description: 'Built a MERN stack productivity application that gamifies tasks through retro 2-bit design. Includes real-time tracking, customizable goals, and streak-based rewards to boost motivation and collaboration.',
             proj_img: productivityImage,
             project_link: 'https://github.com/WMK15/EXPerience',
         },
         {
             title: 'KCL Tech',
-            description: "Managed and designed the website of KCL Tech, one of London's most popular technology societies for students.",
+            description: 'Modernized the database and legacy code for one of London’s top student societies, transforming the website into a central events hub that boosted engagement, increased professionalism, and secured £10,000 in one year.',
             proj_img: kcltech,
             project_link: 'https://www.kcltech.co.uk/',
         },
@@ -27,7 +27,12 @@ const Section4 = () => {
             proj_img: safetyImage,
             project_link: 'https://github.com/jd-paul/FirstYear-Hackathon',
         },
-        // Add more projects here
+        {
+            title: 'Coding Tutors Dashboard',
+            description: 'Developed a full-stack dashboard application using Django with role-based access for admins, tutors, and students. Key features include lesson scheduling, a ticketing system, user management, and secure login. Admins oversee operations, tutors track lessons, and students manage requests and view progress.',
+            proj_img: codingTutors,
+            project_link: 'https://jpaul.pythonanywhere.com/',
+        },
     ];
 
     return (
