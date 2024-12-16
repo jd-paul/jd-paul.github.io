@@ -11,19 +11,19 @@ const Section4 = () => {
     const projects = [
         {
             title: 'Gamified Productivity App',
-            description: 'Built a MERN stack productivity application that gamifies tasks through retro 2-bit design. Includes real-time tracking, customizable goals, and streak-based rewards to boost motivation and collaboration.',
+            description: 'Built a MERN stack productivity application that gamifies tasks through retro 2-bit design. Includes real-time tracking, customizable goals, and streak-based rewards to boost user productivity.',
             proj_img: productivityImage,
             project_link: 'https://github.com/WMK15/EXPerience',
         },
         {
-            title: 'KCL Tech',
-            description: 'Modernized the database and legacy code for one of London’s top student societies, transforming the website into a central events hub that boosted engagement, increased professionalism, and secured £10,000 in one year.',
+            title: 'KCL Tech Hub',
+            description: 'Modernized the database and legacy code for KCL Tech. The redesign boosted engagement by 40% and increased professionalism, helping secured £10,000 in one year.',
             proj_img: kcltech,
             project_link: 'https://www.kcltech.co.uk/',
         },
         {
             title: 'London Safety app',
-            description: 'Created a hackathon output an app that helps users stay safe and notified about nearby crimes in London.',
+            description: 'Developed a hackathon application that helps users stay safe and informed about nearby crimes in their location. Achieved runner-up position.',
             proj_img: safetyImage,
             project_link: 'https://github.com/jd-paul/FirstYear-Hackathon',
         },
