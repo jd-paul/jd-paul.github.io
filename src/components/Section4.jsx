@@ -17,7 +17,7 @@ const Section4 = () => {
         },
         {
             title: 'KCL Tech Hub',
-            description: 'Modernized the database and legacy code for KCL Tech. The redesign boosted engagement by 40% and increased professionalism, helping secured £10,000 in one year.',
+            description: 'Modernized the database and legacy code for KCL Tech. The redesign boosted engagement by 40% and increased professionalism, as well as helping the society secure over £10,000 in sponsorship funding.',
             proj_img: kcltech,
             project_link: 'https://www.kcltech.co.uk/',
         },
