@@ -64,32 +64,31 @@ const Section2 = () => {
                 </span>
 
                 <p className="font-normal text-slate-500 text-xl md:text-2xl mb-4">
-                  Expertise in building complete and scalable applications.{" "}
-                  <br />
+                  Expertise in building robust applications. <br />
                 </p>
 
                 <span className="text-left font-bold font-bitter text-custom-dark_alt text-xl md:text-2xl leading-tight block tracking-normal mb-1.5">
                   Java applications
                 </span>
-                <ProgressBar progress={70} />
-                <span className="mb-2" />
-
-                <span className="text-left font-bold font-bitter text-custom-dark_alt text-xl md:text-2xl leading-tight block tracking-normal mb-1.5">
-                  Web front end
-                </span>
                 <ProgressBar progress={85} />
                 <span className="mb-2" />
 
                 <span className="text-left font-bold font-bitter text-custom-dark_alt text-xl md:text-2xl leading-tight block tracking-normal mb-1.5">
-                  Business management systems
+                  Full stack development
                 </span>
-                <ProgressBar progress={55} />
+                <ProgressBar progress={80} />
+                <span className="mb-2" />
+
+                <span className="text-left font-bold font-bitter text-custom-dark_alt text-xl md:text-2xl leading-tight block tracking-normal mb-1.5">
+                  Data analysis, machine learning
+                </span>
+                <ProgressBar progress={90} />
                 <span className="mb-2" />
 
                 <span className="text-left font-bold font-bitter text-custom-dark_alt text-xl md:text-2xl leading-tight block tracking-normal mb-1.5">
                   Python, Java, C++
                 </span>
-                <ProgressBar progress={75} />
+                <ProgressBar progress={95} />
                 <span className="mb-2" />
               </div>
             </div>
