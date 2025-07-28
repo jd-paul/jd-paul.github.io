@@ -29,7 +29,7 @@ const NavBarMoving = () => {
   };
 
   return (
-    <div className={`fixed top-0 left-0 w-full z-50 transition-all duration-200 font-space-grotesk font-bold text-lg bg-custom-dark_alt_light ${scrolledPastThreshold ? 'bg-custom-accent text-white py-4 px-6 shadow-md' : 'opacity-0 pointer-events-none'}`}>
+    <div className={`fixed top-0 left-0 w-full z-50 transition-all duration-200 font-bold text-lg bg-custom-dark_alt_light ${scrolledPastThreshold ? 'bg-custom-accent text-white py-4 px-6 shadow-md' : 'opacity-0 pointer-events-none'}`}>
       <div className="container mx-auto flex justify-between items-center">
         <ScrollLink
           activeClass="text-custom-accent_main"

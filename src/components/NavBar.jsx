@@ -11,7 +11,7 @@ const NavBar = () => {
   };
 
   return (
-    <div className="absolute top-0 left-0 w-full z-50 bg-transparent py-6 px-8 transition-all duration-200 font-space-grotesk font-bold text-lg">
+    <div className="absolute top-0 left-0 w-full z-50 bg-transparent py-6 px-8 transition-all duration-200 font-bold text-lg">
       <div className="container mx-auto flex justify-between items-center">
         <ScrollLink
           activeClass="text-custom-accent_main"
