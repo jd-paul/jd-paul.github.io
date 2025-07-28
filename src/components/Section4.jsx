@@ -6,7 +6,7 @@ import productivityImage from "../assets/img/img_productivity-app.png";
 import safetyImage from "../assets/img/img_safety-app.png";
 import kcltech from "../assets/img/img_kcl-tech.png";
 import codingTutors from "../assets/img/img_coding-tutors.png";
-import resumeIQ from "../assets/img/img_resume-iq.png"; // New import
+import resumeIQ from "../assets/img/img_resume-iq.png";
 
 const Section4 = () => {
   const projects = [

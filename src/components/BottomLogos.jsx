@@ -4,7 +4,7 @@ import { faGithub, faLinkedin, faReadme } from '@fortawesome/free-brands-svg-ico
 
 const BottomLogos = () => {
   return (
-    <div className="absolute bottom-0 left-0 w-full z-50 bg-transparent py-14 px-36 transition-all duration-200 font-space-grotesk font-bold text-lg">
+    <div className="absolute bottom-0 left-0 w-full z-50 bg-transparent py-14 px-36 transition-all duration-200 font-bold text-lg">
       <div className="container mx-auto flex justify-center items-center">
         <div className="flex space-x-4 items-center">
           <button className="flex items-center bg-transparent text-white px-4 py-2 rounded-md hover:bg-custom-accent hover:text-custom-accent_main transition duration-200">
