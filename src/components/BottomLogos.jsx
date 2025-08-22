@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGithub, faLinkedin, faReadme } from '@fortawesome/free-brands-svg-icons'; // Import brand icons from free-brands-svg-icons
+import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'; // Import brand icons from free-brands-svg-icons
 
 const BottomLogos = () => {
   return (

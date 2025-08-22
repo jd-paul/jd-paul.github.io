@@ -6,11 +6,12 @@ import { Link } from "react-router-dom";
 
 import Conference from "../assets/img/img_working.png";
 import CustomerA from "../assets/img/img_customer-a.jpeg";
-import CustomerB from "../assets/img/img_customer-b.jpeg";
+import CustomerB from "../assets/img/img_gsyp-logo.png";
+import CustomerC from "../assets/img/img_customer-c.jpg";
 
 import kcltech from "../assets/img/img_kcl-tech.png";
 import codingTutors from "../assets/img/img_coding-tutors.png";
-import resumeIQ from "../assets/img/img_resume-iq.png";
+import resumeIQ from "../assets/img/img_resume-iq.jpg";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -19,7 +20,9 @@ import {
   faReact,
   faDocker,
   faGithub,
+  faLinkedin,
 } from "@fortawesome/free-brands-svg-icons";
+
 import { faFeather } from "@fortawesome/free-solid-svg-icons"; // for Apache
 
 import Modal from "./Modal";
@@ -56,26 +59,41 @@ const Section1 = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {[
-          { img: resumeIQ, name: "Python, Classical Machine Learning" },
-          { img: kcltech, name: "KCL Tech Hub" },
-          { img: codingTutors, name: "Tutor Student Management System" },
+          {
+            img: resumeIQ,
+            name: "Resume IQ: Python, Classical Machine Learning",
+            url: "https://github.com/jd-paul/resume-iq",
+          },
+          {
+            img: kcltech,
+            name: "KCL Tech Hub",
+            url: "https://www.kcltech.co.uk/",
+          },
+          {
+            img: codingTutors,
+            name: "Tutor Student Management System",
+            url: "https://github.com/jd-paul/tutor-management-system",
+          },
         ].map((project, i) => (
-          <div
+          <a
             key={i}
-            className="relative min-h-[180px] max-h-[300px] overflow-hidden rounded-lg"
+            href={project.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative group block min-h-[180px] max-h-[300px] overflow-hidden rounded-lg"
           >
             <img
               src={project.img}
               alt={project.name}
               className="w-full h-full object-cover bg-white"
             />
-            {/* Gradient Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/65 to-transparent z-10" />
-            {/* Text on top of gradient with side padding */}
+            {/* Gradient overlay */}
+            <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/65 group-hover:from-black/75 to-transparent transition-colors z-10" />
+            {/* Caption */}
             <div className="absolute bottom-3 left-0 right-0 z-20 px-6">
               <p className="text-white text-sm font-semibold">{project.name}</p>
             </div>
-          </div>
+          </a>
         ))}
       </div>
 
@@ -110,13 +128,16 @@ const Section1 = () => {
         <div className="absolute inset-0 bg-black opacity-40 z-10" />
 
         {/* Arrow Button */}
-        <button
-          className="flex items-center gap-1 absolute right-4 top-4 text-white  rounded-lg px-3 py-2 text-sm hover:bg-white hover:text-black transition z-20"
-          aria-label="About Me"
-        >
-          About Me
-          <ArrowRight className="w-4 h-4" />
-        </button>
+
+        <Link to="/about" style={{ textDecoration: "none" }}>
+          <button
+            className="flex items-center gap-1 absolute right-4 top-4 text-white  rounded-lg px-3 py-2 text-sm hover:bg-white hover:text-black transition z-20"
+            aria-label="About Me"
+          >
+            About Me
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </Link>
 
         {/* Background Image */}
         <img
@@ -129,7 +150,7 @@ const Section1 = () => {
       {/* Contact and Clients Sections */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
         {/* Contact Section */}
-        <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6">
+        <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-700 p-6">
           <h2 className="text-2xl mb-4">Contact</h2>
           <button
             onClick={() => setShowModal(true)}
@@ -142,7 +163,7 @@ const Section1 = () => {
         </div>
 
         {/* Happy Clients Section */}
-        <div className="bg-gray-900 rounded-xl p-6">
+        <div className="bg-neutral-900 rounded-xl p-6">
           <div className="flex items-center gap-2 mb-2">
             {[...Array(5)].map((_, i) => (
               <svg
@@ -155,10 +176,10 @@ const Section1 = () => {
             ))}
           </div>
           <h3 className="text-4xl font-bold mb-4">100%</h3>
-          <p className="text-gray-400">Happy Clients</p>
+          <p className="text-neutral-400">Happy Clients</p>
 
           <div className="flex -space-x-2 mt-4">
-            {[CustomerA, CustomerB, CustomerA].map((src, i) => (
+            {[CustomerA, CustomerB, CustomerC].map((src, i) => (
               <img
                 key={i}
                 src={src}
@@ -172,10 +193,33 @@ const Section1 = () => {
 
       <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
         <h2 className="text-xl font-semibold mb-4">Other Contact Info</h2>
-        <p className="text-sm">
+        <p className="text-sm mb-4">
           You can reach me via LinkedIn, Email, or find my socials below.
         </p>
-        {/* Add contact content here */}
+
+        <div className="flex gap-4 flex-wrap">
+          {/* GitHub */}
+          <a
+            href="https://github.com/jd-paul"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 rounded-lg text-blue-800 hover:text-neutral-800 transition"
+          >
+            <FontAwesomeIcon icon={faGithub} className="w-5 h-5" />
+            <span className="text-sm">github.com/jd-paul</span>
+          </a>
+
+          {/* LinkedIn */}
+          <a
+            href="https://www.linkedin.com/in/paul-san-diego/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 rounded-lg text-blue-800 hover:text-neutral-800 transition"
+          >
+            <FontAwesomeIcon icon={faLinkedin} className="w-5 h-5" />
+            <span className="text-sm">linkedin.com/in/paul-san-diego</span>
+          </a>
+        </div>
       </Modal>
     </section>
   );
