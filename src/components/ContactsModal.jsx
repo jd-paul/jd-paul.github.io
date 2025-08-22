@@ -19,7 +19,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
         <div className="bg-zinc-950 text-white px-6 py-4 flex justify-between items-center">
           <h2 className="text-lg font-semibold">Title: {title}</h2>
           <button onClick={onClose} aria-label="Close">
-            <X className="w-5 h-5 text-white hover:text-gray-300" />
+            <X className="w-5 h-5 text-white hover:text-neutral-300" />
           </button>
         </div>
 
