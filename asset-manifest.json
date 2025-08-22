@@ -1,26 +1,28 @@
 {
   "files": {
-    "main.css": "/static/css/main.496b4837.css",
-    "main.js": "/static/js/main.acbd2d54.js",
-    "static/js/453.ace21015.chunk.js": "/static/js/453.ace21015.chunk.js",
-    "static/media/img_productivity-app.png": "/static/media/img_productivity-app.f9661e08e1caf7e67a76.png",
-    "static/media/img_city.jpg": "/static/media/img_city.1792fe3ec97930e658fb.jpg",
+    "main.css": "/static/css/main.00f5479b.css",
+    "main.js": "/static/js/main.46adb7d5.js",
+    "static/js/453.ad7768ec.chunk.js": "/static/js/453.ad7768ec.chunk.js",
+    "static/media/img_food.png": "/static/media/img_food.d0c8c19a144185c19dbd.png",
+    "static/media/img_kcl-tech.png": "/static/media/img_kcl-tech.23e87c417de93e435685.png",
+    "static/media/img_gsyp.png": "/static/media/img_gsyp.9ed758633c5da3dba46c.png",
+    "static/media/img_java-statistics.png": "/static/media/img_java-statistics.c80fdb2527b619521ad1.png",
+    "static/media/img_bohol.jpg": "/static/media/img_bohol.e0df92eff45dfb6a1fe9.jpg",
+    "static/media/img_gsyp-logo.png": "/static/media/img_gsyp-logo.669c4181f2b22ba0453b.png",
     "static/media/img_coding-tutors.png": "/static/media/img_coding-tutors.980b608901ded5a51776.png",
     "static/media/img_working.png": "/static/media/img_working.d5914a324617c0489ab6.png",
-    "static/media/img_kcl-tech.png": "/static/media/img_kcl-tech.2143f22eff9734f4a585.png",
-    "static/media/img_resume-iq.png": "/static/media/img_resume-iq.0fb10b839121ab9440c3.png",
+    "static/media/img_tic-tac-toe.png": "/static/media/img_tic-tac-toe.2937d88183f33edb5f7e.png",
     "static/media/img_profile.png": "/static/media/img_profile.7484fe8313698acbcdad.png",
-    "static/media/img_safety-app.png": "/static/media/img_safety-app.605209eed1e807ce57f8.png",
-    "static/media/revicons.eot": "/static/media/revicons.a77de540a38981833f9e.eot",
-    "static/media/revicons.ttf": "/static/media/revicons.57fd05d4ae650374c8de.ttf",
-    "static/media/revicons.woff": "/static/media/revicons.e8746a624ed098489406.woff",
+    "static/media/img_resume-iq.jpg": "/static/media/img_resume-iq.1d14c5b13dd8e62cd9bc.jpg",
+    "static/media/img_customer-c.jpg": "/static/media/img_customer-c.70daf2aacc18c3577a05.jpg",
+    "static/media/img_customer-a.jpeg": "/static/media/img_customer-a.b49eae631e85c5243462.jpeg",
     "index.html": "/index.html",
-    "main.496b4837.css.map": "/static/css/main.496b4837.css.map",
-    "main.acbd2d54.js.map": "/static/js/main.acbd2d54.js.map",
-    "453.ace21015.chunk.js.map": "/static/js/453.ace21015.chunk.js.map"
+    "main.00f5479b.css.map": "/static/css/main.00f5479b.css.map",
+    "main.46adb7d5.js.map": "/static/js/main.46adb7d5.js.map",
+    "453.ad7768ec.chunk.js.map": "/static/js/453.ad7768ec.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.496b4837.css",
-    "static/js/main.acbd2d54.js"
+    "static/css/main.00f5479b.css",
+    "static/js/main.46adb7d5.js"
   ]
 }
