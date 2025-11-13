@@ -1,12 +1,12 @@
 {
   "files": {
-    "main.css": "/static/css/main.00f5479b.css",
-    "main.js": "/static/js/main.46adb7d5.js",
-    "static/js/453.ad7768ec.chunk.js": "/static/js/453.ad7768ec.chunk.js",
+    "main.css": "/static/css/main.4a4c24c1.css",
+    "main.js": "/static/js/main.a22147ac.js",
+    "static/js/453.1407b060.chunk.js": "/static/js/453.1407b060.chunk.js",
     "static/media/img_food.png": "/static/media/img_food.d0c8c19a144185c19dbd.png",
-    "static/media/img_kcl-tech.png": "/static/media/img_kcl-tech.23e87c417de93e435685.png",
     "static/media/img_gsyp.png": "/static/media/img_gsyp.9ed758633c5da3dba46c.png",
     "static/media/img_java-statistics.png": "/static/media/img_java-statistics.c80fdb2527b619521ad1.png",
+    "static/media/img_kcl-tech.png": "/static/media/img_kcl-tech.6fa9b58f49980def29cd.png",
     "static/media/img_bohol.jpg": "/static/media/img_bohol.e0df92eff45dfb6a1fe9.jpg",
     "static/media/img_gsyp-logo.png": "/static/media/img_gsyp-logo.669c4181f2b22ba0453b.png",
     "static/media/img_coding-tutors.png": "/static/media/img_coding-tutors.980b608901ded5a51776.png",
@@ -17,12 +17,12 @@
     "static/media/img_customer-c.jpg": "/static/media/img_customer-c.70daf2aacc18c3577a05.jpg",
     "static/media/img_customer-a.jpeg": "/static/media/img_customer-a.b49eae631e85c5243462.jpeg",
     "index.html": "/index.html",
-    "main.00f5479b.css.map": "/static/css/main.00f5479b.css.map",
-    "main.46adb7d5.js.map": "/static/js/main.46adb7d5.js.map",
-    "453.ad7768ec.chunk.js.map": "/static/js/453.ad7768ec.chunk.js.map"
+    "main.4a4c24c1.css.map": "/static/css/main.4a4c24c1.css.map",
+    "main.a22147ac.js.map": "/static/js/main.a22147ac.js.map",
+    "453.1407b060.chunk.js.map": "/static/js/453.1407b060.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.00f5479b.css",
-    "static/js/main.46adb7d5.js"
+    "static/css/main.4a4c24c1.css",
+    "static/js/main.a22147ac.js"
   ]
 }
