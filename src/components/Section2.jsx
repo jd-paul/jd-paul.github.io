@@ -42,7 +42,7 @@ const Section2 = () => {
                   <span className="text-left font-bold font-bitter text-custom-dark_alt text-xl md:text-2xl leading-tight block tracking-normal">
                     Name:
                   </span>
-                  Paul San Diego
+                  John Paul San Diego
                   <span className="text-left font-bold font-bitter text-custom-dark_alt text-xl md:text-2xl leading-tight block tracking-normal mt-3">
                     University:
                   </span>

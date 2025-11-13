@@ -34,7 +34,7 @@ const Section1 = () => {
               Hej!
             </span>
             <p className="font-space-grotesk font-bold md:text-5xl text-4xl mt-[0.5rem] text-shadow-xl">
-              I'm Paul San Diego
+              I'm John Paul San Diego
             </p>
             <p className="font-bold text-xl mt-[0.1rem] text-shadow-xl">
               | PAL Leader @ KCL | Website Manager | 2nd Year CS Student |

@@ -57,7 +57,7 @@ const Section1 = () => {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {[
           {
             img: resumeIQ,
@@ -68,11 +68,6 @@ const Section1 = () => {
             img: kcltech,
             name: "KCL Tech Hub",
             url: "https://www.kcltech.co.uk/",
-          },
-          {
-            img: codingTutors,
-            name: "Tutor Student Management System",
-            url: "https://github.com/jd-paul/tutor-management-system",
           },
         ].map((project, i) => (
           <a

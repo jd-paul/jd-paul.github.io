@@ -15,11 +15,11 @@ const Sidebar = () => {
         <div className="flex items-center gap-4">
           <img
             src={Selfie}
-            alt="Paul San Diego"
+            alt="John Paul San Diego"
             className="rounded-full w-16 h-16 object-cover"
           />
           <div>
-            <h1 className="text-2xl font-space-grotesk">Paul San Diego</h1>
+            <h1 className="text-2xl font-space-grotesk">John Paul San Diego</h1>
             <p className="text-gray-400">Computer Science</p>
           </div>
         </div>
@@ -28,13 +28,11 @@ const Sidebar = () => {
         <div className="space-y-6">
           <p className="text-gray-300 text-lg leading-relaxed">
             I'm a Computer Science student at King's College London.{" "}
-            <br className="mb-1" />I solve problems using code and data. I'm
-            passionate for converting complex information into useful solutions.
-            <br className="mb-1" />I also enjoy cooking ☺
+            <br className="mb-1" />Software engineer. KCL Tech Lead.
           </p>
-          <button className="border border-white rounded-full px-4 py-2 text-sm hover:bg-white hover:text-black transition">
+          {/* <button className="border border-white rounded-full px-4 py-2 text-sm hover:bg-white hover:text-black transition">
             More about Me
-          </button>
+          </button> */}
         </div>
 
         {/* Social Links */}
@@ -59,7 +57,7 @@ const Sidebar = () => {
           </div>
           <div className="text-gray-400 text-sm">
             <p>johnpaul20030@gmail.com</p>
-            <p>© 2025 Paul San Diego</p>
+            <p>© 2025 John Paul San Diego</p>
           </div>
         </div>
       </div>
