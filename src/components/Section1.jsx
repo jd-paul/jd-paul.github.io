@@ -10,7 +10,6 @@ import CustomerB from "../assets/img/img_gsyp-logo.png";
 import CustomerC from "../assets/img/img_customer-c.jpg";
 
 import kcltech from "../assets/img/img_kcl-tech.png";
-import codingTutors from "../assets/img/img_coding-tutors.png";
 import resumeIQ from "../assets/img/img_resume-iq.jpg";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
