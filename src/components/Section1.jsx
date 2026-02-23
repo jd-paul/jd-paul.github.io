@@ -1,8 +1,9 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { ArrowRight, ArrowDownLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { supabase } from "../lib/supabaseClient";
 
 import Conference from "../assets/img/img_working.png";
 import CustomerA from "../assets/img/img_customer-a.jpeg";
@@ -27,6 +28,7 @@ import { faFeather } from "@fortawesome/free-solid-svg-icons"; // for Apache
 import Modal from "./Modal";
 
 const Section1 = () => {
+  const [topProjects, setTopProjects] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const techStack = [
     { name: "Python", icon: faPython, color: "#3776AB" },
@@ -39,6 +41,20 @@ const Section1 = () => {
     { name: "Apache Commons Math", icon: faFeather, color: "#D42029" },
     { name: "Adobe", icon: null, color: "#FF0000" },
   ];
+
+  useEffect(() => {
+    const fetchTopProjects = async () => {
+      const { data, error } = await supabase
+        .from("projects")
+        .select("title, image_url, project_link")
+        .order("display_order", { ascending: true })
+        .limit(2); // Simply getting top 2 results
+
+      if (!error) setTopProjects(data);
+    };
+
+    fetchTopProjects();
+  }, []);
 
   return (
     <section className="p-6 font-work-sans" id="about">
@@ -57,35 +73,26 @@ const Section1 = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {[
-          {
-            img: resumeIQ,
-            name: "Resume IQ: Python, Classical Machine Learning",
-            url: "https://github.com/jd-paul/resume-iq",
-          },
-          {
-            img: kcltech,
-            name: "KCL Tech Hub",
-            url: "https://www.kcltech.co.uk/",
-          },
-        ].map((project, i) => (
+        {topProjects.map((project, i) => (
           <a
-            key={i}
-            href={project.url}
+            key={project.id || i}
+            href={project.project_link} //
             target="_blank"
             rel="noopener noreferrer"
             className="relative group block min-h-[180px] max-h-[300px] overflow-hidden rounded-lg"
           >
             <img
-              src={project.img}
-              alt={project.name}
+              src={project.image_url} //
+              alt={project.title}
               className="w-full h-full object-cover bg-white"
             />
             {/* Gradient overlay */}
             <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/65 group-hover:from-black/75 to-transparent transition-colors z-10" />
             {/* Caption */}
             <div className="absolute bottom-3 left-0 right-0 z-20 px-6">
-              <p className="text-white text-sm font-semibold">{project.name}</p>
+              <p className="text-white text-sm font-semibold">
+                {project.title}
+              </p>
             </div>
           </a>
         ))}
