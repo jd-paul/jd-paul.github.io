@@ -31,7 +31,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="lg:h-screen lg:max-h-screen relative lg:sticky top-0 overflow-hidden font-work-sans">
+    <div className="lg:h-screen lg:max-h-screen relative lg:sticky top-0 overflow-hidden font-work-sans z-50">
       {/* Background Pattern */}
       <CssGridBackground />
 
