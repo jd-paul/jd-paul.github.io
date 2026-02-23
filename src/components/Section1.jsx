@@ -10,9 +10,6 @@ import CustomerA from "../assets/img/img_customer-a.jpeg";
 import CustomerB from "../assets/img/img_gsyp-logo.png";
 import CustomerC from "../assets/img/img_customer-c.jpg";
 
-import kcltech from "../assets/img/img_kcl-tech.png";
-import resumeIQ from "../assets/img/img_resume-iq.jpg";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPython,
