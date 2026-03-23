@@ -1,6 +1,6 @@
 import "./App.css";
 import { lazy, Suspense } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 
 const LandingPage = lazy(() => import("./components/LandingPage.jsx"));
 const ProjectsPage = lazy(() => import("./projects/page.jsx"));
