@@ -1,6 +1,5 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLink } from "@fortawesome/free-solid-svg-icons";
+import { Link as LinkIcon } from "lucide-react";
 
 import productivityImage from "../assets/img/img_productivity-app.png";
 import safetyImage from "../assets/img/img_safety-app.png";
@@ -8,45 +7,46 @@ import kcltech from "../assets/img/img_kcl-tech.png";
 import codingTutors from "../assets/img/img_coding-tutors.png";
 import resumeIQ from "../assets/img/img_resume-iq.png";
 
-const Section4 = () => {
-  const projects = [
-    {
-      title: "Gamified Productivity App",
-      description:
-        "Built a MERN stack productivity application that gamifies tasks through retro 2-bit design. Includes real-time tracking, customizable goals, and streak-based rewards to boost user productivity.",
-      proj_img: productivityImage,
-      project_link: "https://github.com/WMK15/EXPerience",
-    },
-    {
-      title: "KCL Tech Hub",
-      description:
-        "Modernized the database and legacy code for KCL Tech. The redesign boosted engagement by 40% and increased professionalism, as well as helping the society secure over £10,000 in sponsorship funding.",
-      proj_img: kcltech,
-      project_link: "https://www.kcltech.co.uk/",
-    },
-    {
-      title: "London Safety app",
-      description:
-        "Developed a hackathon application that helps users stay safe and informed about nearby crimes in their location. Achieved runner-up position.",
-      proj_img: safetyImage,
-      project_link: "https://github.com/jd-paul/FirstYear-Hackathon",
-    },
-    {
-      title: "Coding Tutors Dashboard",
-      description:
-        "Developed a full-stack dashboard application using Django with role-based access for admins, tutors, and students. Key features include lesson scheduling, a ticketing system, user management, and secure login. Admins oversee operations, tutors track lessons, and students manage requests and view progress.",
-      proj_img: codingTutors,
-      project_link: "https://jpaul.pythonanywhere.com/",
-    },
-    {
-      title: "Resume IQ",
-      description:
-        "Built an AI-powered resume evaluation tool that extracts text from uploaded PDFs, identifies key skills, and evaluates STAR responses. Implemented using Next.js, FastAPI, Supabase, and advanced NLP techniques.",
-      proj_img: resumeIQ,
-      project_link: "https://github.com/jd-paul/resume-iq",
-    },
-  ];
+// Static data at module scope — never re-created on render
+const PROJECTS = [
+  {
+    title: "Gamified Productivity App",
+    description:
+      "Built a MERN stack productivity application that gamifies tasks through retro 2-bit design. Includes real-time tracking, customizable goals, and streak-based rewards to boost user productivity.",
+    proj_img: productivityImage,
+    project_link: "https://github.com/WMK15/EXPerience",
+  },
+  {
+    title: "KCL Tech Hub",
+    description:
+      "Modernized the database and legacy code for KCL Tech. The redesign boosted engagement by 40% and increased professionalism, as well as helping the society secure over £10,000 in sponsorship funding.",
+    proj_img: kcltech,
+    project_link: "https://www.kcltech.co.uk/",
+  },
+  {
+    title: "London Safety app",
+    description:
+      "Developed a hackathon application that helps users stay safe and informed about nearby crimes in their location. Achieved runner-up position.",
+    proj_img: safetyImage,
+    project_link: "https://github.com/jd-paul/FirstYear-Hackathon",
+  },
+  {
+    title: "Coding Tutors Dashboard",
+    description:
+      "Developed a full-stack dashboard application using Django with role-based access for admins, tutors, and students. Key features include lesson scheduling, a ticketing system, user management, and secure login. Admins oversee operations, tutors track lessons, and students manage requests and view progress.",
+    proj_img: codingTutors,
+    project_link: "https://jpaul.pythonanywhere.com/",
+  },
+  {
+    title: "Resume IQ",
+    description:
+      "Built an AI-powered resume evaluation tool that extracts text from uploaded PDFs, identifies key skills, and evaluates STAR responses. Implemented using Next.js, FastAPI, Supabase, and advanced NLP techniques.",
+    proj_img: resumeIQ,
+    project_link: "https://github.com/jd-paul/resume-iq",
+  },
+];
 
+const Section4 = () => {
   return (
     <div>
       <div className="max-w-7xl mx-auto mt-2 px-6 md:px-8">
@@ -56,7 +56,7 @@ const Section4 = () => {
           </span>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
-            {projects.map((project, index) => (
+            {PROJECTS.map((project, index) => (
               <div
                 key={index}
                 className="bg-white shadow-md rounded-lg overflow-hidden"
@@ -67,6 +67,7 @@ const Section4 = () => {
                       src={project.proj_img}
                       alt={project.title}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                     />
                   </div>
                 )}
@@ -79,7 +80,7 @@ const Section4 = () => {
                         rel="noopener noreferrer"
                         className="flex items-center text-custom-dark_alt_light mr-2"
                       >
-                        <FontAwesomeIcon icon={faLink} className="mr-2" />
+                        <LinkIcon className="mr-2 w-4 h-4" />
                         <h3 className="text-xl font-bold">{project.title}</h3>
                       </a>
                     )}

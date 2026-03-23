@@ -1,11 +1,11 @@
 import React from 'react';
-import { faRocket, faPenRuler, faPeopleArrows } from '@fortawesome/free-solid-svg-icons'; // Import solid icons
-import { faSearchengin } from '@fortawesome/free-brands-svg-icons'; // Import brand icon
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FaRocket } from 'react-icons/fa';
+import { FaSearchengin } from 'react-icons/fa';
+import { FaPencilRuler } from 'react-icons/fa';
+import { FaPeopleArrows } from 'react-icons/fa6';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import './Carousel.css';
-
 
 const responsive = {
     superLargeDesktop: {
@@ -28,7 +28,31 @@ const responsive = {
         items: 1,
         partialVisibilityGutter: 30
     }
-}
+};
+
+// Static data at module scope — created once, never re-created on render
+const data = [
+    {
+        title: `Application development`,
+        Icon: FaRocket,
+        paragraph: `Whether for mobile or desktop applications, I aim to create effective solutions for your needs.`,
+    },
+    {
+        title: `SEO optimizations`,
+        Icon: FaSearchengin,
+        paragraph: `Utilize SEO strategies to enhance your online presence and reach your target audience.`,
+    },
+    {
+        title: `Thoughtful design`,
+        Icon: FaPencilRuler,
+        paragraph: `Craft and promote a compelling public image that resonates with your audience.`,
+    },
+    {
+        title: `Training and collaboration`,
+        Icon: FaPeopleArrows,
+        paragraph: `Experience in training colleagues and developers on adopting new technologies.`,
+    },
+];
 
 const Slider = () => {
     return (
@@ -37,7 +61,6 @@ const Slider = () => {
                 <Carousel
                     arrows={false}
                     swipeable={true}
-                    // draggable={true}
                     showDots={true}
                     responsive={responsive}
                     ssr={false}
@@ -46,15 +69,14 @@ const Slider = () => {
                     containerClass="carousel-container"
                     removeArrowOnDeviceType={["tablet", "mobile"]}
                     dotListClass="custom-dot-list-style"
-                    // itemClass="carousel-item-padding-40-px"
                     focusOnSelect={true}
                 >
                     {data.map((d) => (
-                        <div className="h-[20rem] text-white rounded-xl m-1 ">
+                        <div key={d.title} className="h-[20rem] text-white rounded-xl m-1 ">
                             <div className="h-44 rounded-t-xl flex justify-center items-center">
-                                <FontAwesomeIcon icon={d.icon_name} className="h-24 w-24 text-gray-300" />
+                                <d.Icon className="h-24 w-24 text-gray-300" />
                             </div>
-                            
+
                             <div className="flex flex-col text-center items-center p-0">
                                 <p className="text-xl font-semibold ">{d.title}</p>
                                 <p className="text-md font-normal font-bitter text-gray-400 text-md leading-normal block tracking-normal mt-2">
@@ -63,35 +85,10 @@ const Slider = () => {
                             </div>
                         </div>
                     ))}
-                </Carousel>;
-
-
+                </Carousel>
             </div>
         </div>
     );
 };
-
-const data = [
-    {
-        title: `Application development`,
-        icon_name: faRocket,
-        paragraph: `Whether for mobile or desktop applications, I aim to create effective solutions for your needs.`,
-    },
-    {
-        title: `SEO optimizations`,
-        icon_name: faSearchengin,
-        paragraph: `Utilize SEO strategies to enhance your online presence and reach your target audience.`,
-    },
-    {
-        title: `Thoughtful design`,
-        icon_name: faPenRuler,
-        paragraph: `Craft and promote a compelling public image that resonates with your audience.`,
-    },
-    {
-        title: `Training and collaboration`,
-        icon_name: faPeopleArrows,
-        paragraph: `Experience in training colleagues and developers on adopting new technologies.`,
-    },
-];
 
 export default Slider;
