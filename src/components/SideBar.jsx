@@ -43,6 +43,7 @@ const Sidebar = () => {
             src={Selfie}
             alt="John Paul San Diego"
             className="rounded-full w-16 h-16 object-cover"
+            loading="lazy"
           />
           <div>
             <h1 className="text-2xl font-space-grotesk">John Paul San Diego</h1>

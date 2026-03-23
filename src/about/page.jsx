@@ -36,6 +36,7 @@ const LandingPage = () => {
                 src={banner}
                 alt="Banner"
                 className="w-full h-auto object-cover rounded-lg"
+                loading="lazy"
               />
             </div>
 
@@ -79,6 +80,7 @@ const LandingPage = () => {
                   src={food}
                   alt="Sinigang"
                   className="w-full max-h-[400px] object-cover rounded-lg"
+                  loading="lazy"
                 />
               </div>
             </div>

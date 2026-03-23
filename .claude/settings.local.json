@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la /c/kSWE/jd-paul.github.io/*.json /c/kSWE/jd-paul.github.io/src 2>/dev/null | head -30)",
+      "Bash(grep -v '^$')",
+      "Bash(grep -rn \"className.*\\\\[\\\\.\\\\*\\\\]\\\\|className={\\\\`\" /c/kSWE/jd-paul.github.io/src --include=\"*.jsx\")",
+      "Bash(npm install:*)",
+      "Bash(node -e \"require\\(''@tanstack/react-query''\\); console.log\\(''ok''\\)\")",
+      "Bash(npm uninstall:*)",
+      "Bash(npm run:*)",
+      "Bash(magick --version)",
+      "Bash(convert --version)"
+    ]
+  }
+}

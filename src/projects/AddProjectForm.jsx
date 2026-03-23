@@ -135,6 +135,7 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
                 src={imagePreview}
                 alt="Preview"
                 className="w-full h-44 object-cover"
+                loading="lazy"
               />
               <button
                 type="button"

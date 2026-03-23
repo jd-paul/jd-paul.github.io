@@ -1,32 +1,23 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useCallback } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/SideBar";
 import AddProjectForm from "./AddProjectForm";
 
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
+import { useProjects } from "../hooks/useProjects";
 
 const LandingPage = () => {
   const [session, setSession] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  const fetchProjects = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("projects")
-      .select("*")
-      .order("display_order", { ascending: true });
+  const { data: projects = [], isLoading: loading, refetch } = useProjects();
 
-    if (!error) setProjects(data);
-    setLoading(false);
-  };
+  const handleToggleForm = useCallback(() => setShowForm((v) => !v), []);
+  const handleCloseForm = useCallback(() => setShowForm(false), []);
 
   useEffect(() => {
-    fetchProjects();
-
     supabase.auth
       .getSession()
       .then(({ data: { session } }) => setSession(session));
@@ -52,7 +43,7 @@ const LandingPage = () => {
               <div className="flex gap-3">
                 {session && (
                   <button
-                    onClick={() => setShowForm(!showForm)}
+                    onClick={handleToggleForm}
                     className="bg-blue-600 px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition"
                   >
                     {showForm ? "Close Form" : "Add Project"}
@@ -72,12 +63,12 @@ const LandingPage = () => {
                   {/* Darkened backdrop */}
                   <div
                     className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-                    onClick={() => setShowForm(false)}
+                    onClick={handleCloseForm}
                   />
                   <div className="relative z-10 w-full max-w-2xl max-h-screen overflow-y-auto mx-auto my-auto">
                     <AddProjectForm
-                      onSuccess={fetchProjects}
-                      onClose={() => setShowForm(false)}
+                      onSuccess={refetch}
+                      onClose={handleCloseForm}
                     />
                   </div>
                 </div>
@@ -115,6 +106,7 @@ const LandingPage = () => {
                         src={project.image_url}
                         alt={project.title}
                         className="w-full h-40 object-cover"
+                        loading="lazy"
                       />
                     </div>
 

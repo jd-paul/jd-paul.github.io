@@ -18,6 +18,7 @@ const Section2 = () => {
             src={Selfie}
             alt="Selfie"
             className="rounded-full h-32 w-32 object-cover mb-4 mx-auto my-4"
+            loading="lazy"
           />
 
           <p className="mx-6 my-3 font-normal text-slate-600 text-xl md:text-2xl px-0 md:px-6">

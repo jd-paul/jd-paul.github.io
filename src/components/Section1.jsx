@@ -1,64 +1,60 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useCallback } from "react";
+import { useState } from "react";
 
-import { ArrowRight, ArrowDownLeft } from "lucide-react";
+import { ArrowRight, ArrowDownLeft, Github, Linkedin } from "lucide-react";
 import { Link } from "react-router-dom";
-import { supabase } from "../lib/supabaseClient";
+
+import {
+  FaPython,
+  FaJava,
+  FaReact,
+  FaDocker,
+  FaGithub,
+  FaFeather,
+} from "react-icons/fa";
 
 import Conference from "../assets/img/img_working.png";
 import CustomerA from "../assets/img/img_customer-a.jpeg";
 import CustomerB from "../assets/img/img_gsyp-logo.png";
 import CustomerC from "../assets/img/img_customer-c.jpg";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPython,
-  faJava,
-  faReact,
-  faDocker,
-  faGithub,
-  faLinkedin,
-} from "@fortawesome/free-brands-svg-icons";
-
-import { faFeather } from "@fortawesome/free-solid-svg-icons"; // for Apache
-
 import Modal from "./Modal";
+import { useProjects } from "../hooks/useProjects";
+
+// Static data lives at module scope — created once, never re-created on render
+const TECH_STACK = [
+  { name: "Python", Icon: FaPython, color: "#3776AB" },
+  { name: "Java", Icon: FaJava, color: "#007396" },
+  { name: "React", Icon: FaReact, color: "#61DBFB" },
+  { name: "Docker", Icon: FaDocker, color: "#2496ED" },
+  { name: "GitHub", Icon: FaGithub, color: "#181717" },
+  { name: "Numpy", Icon: null, color: "#013243" },
+  { name: "Supabase", Icon: null, color: "#3ECF8E" },
+  { name: "Apache Commons Math", Icon: FaFeather, color: "#D42029" },
+  { name: "Adobe", Icon: null, color: "#FF0000" },
+];
+
+const STAR_INDICES = [0, 1, 2, 3, 4];
+
+const CUSTOMER_AVATARS = [CustomerA, CustomerB, CustomerC];
+
+const LINK_STYLE = { textDecoration: "none" };
 
 const Section1 = () => {
-  const [topProjects, setTopProjects] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const techStack = [
-    { name: "Python", icon: faPython, color: "#3776AB" },
-    { name: "Java", icon: faJava, color: "#007396" },
-    { name: "React", icon: faReact, color: "#61DBFB" },
-    { name: "Docker", icon: faDocker, color: "#2496ED" },
-    { name: "GitHub", icon: faGithub, color: "#181717" },
-    { name: "Numpy", icon: null, color: "#013243" },
-    { name: "Supabase", icon: null, color: "#3ECF8E" },
-    { name: "Apache Commons Math", icon: faFeather, color: "#D42029" },
-    { name: "Adobe", icon: null, color: "#FF0000" },
-  ];
 
-  useEffect(() => {
-    const fetchTopProjects = async () => {
-      const { data, error } = await supabase
-        .from("projects")
-        .select("title, image_url, project_link")
-        .order("display_order", { ascending: true })
-        .limit(2); // Simply getting top 2 results
+  const { data: allProjects = [] } = useProjects();
+  const topProjects = allProjects.slice(0, 2);
 
-      if (!error) setTopProjects(data);
-    };
-
-    fetchTopProjects();
-  }, []);
+  const handleShowModal = useCallback(() => setShowModal(true), []);
+  const handleCloseModal = useCallback(() => setShowModal(false), []);
 
   return (
     <section className="p-6 font-work-sans" id="about">
       {/* Projects */}
       <div className="flex justify-between items-center mb-3 mt-6">
         <h2 className="text-2xl font-space-grotesk">My Projects</h2>
-        <Link to="/projects" style={{ textDecoration: "none" }}>
+        <Link to="/projects" style={LINK_STYLE}>
           <button
             className="flex items-center gap-1 border px-3 py-2.5 border-white text-white rounded-lg text-sm hover:bg-white hover:text-black transition"
             aria-label="Back to home"
@@ -73,15 +69,16 @@ const Section1 = () => {
         {topProjects.map((project, i) => (
           <a
             key={project.id || i}
-            href={project.project_link} //
+            href={project.project_link}
             target="_blank"
             rel="noopener noreferrer"
             className="relative group block min-h-[180px] max-h-[300px] overflow-hidden rounded-lg"
           >
             <img
-              src={project.image_url} //
+              src={project.image_url}
               alt={project.title}
               className="w-full h-full object-cover bg-white"
+              loading="lazy"
             />
             {/* Gradient overlay */}
             <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/65 group-hover:from-black/75 to-transparent transition-colors z-10" />
@@ -102,16 +99,14 @@ const Section1 = () => {
         </div>
 
         <div className="flex gap-3 flex-wrap">
-          {techStack.map((tech, idx) => (
+          {TECH_STACK.map((tech, idx) => (
             <div
               key={idx}
               title={tech.name}
               className="flex items-center justify-center rounded-md px-3 py-2 text-sm font-semibold bg-white"
               style={{ color: tech.color }}
             >
-              {tech.icon ? (
-                <FontAwesomeIcon icon={tech.icon} className="mr-2 w-4 h-4" />
-              ) : null}
+              {tech.Icon && <tech.Icon className="mr-2 w-4 h-4" />}
               {tech.name}
             </div>
           ))}
@@ -125,9 +120,7 @@ const Section1 = () => {
         {/* Overlay */}
         <div className="absolute inset-0 bg-black opacity-40 z-10" />
 
-        {/* Arrow Button */}
-
-        <Link to="/about" style={{ textDecoration: "none" }}>
+        <Link to="/about" style={LINK_STYLE}>
           <button
             className="flex items-center gap-1 absolute right-4 top-4 text-white  rounded-lg px-3 py-2 text-sm hover:bg-white hover:text-black transition z-20"
             aria-label="About Me"
@@ -137,7 +130,7 @@ const Section1 = () => {
           </button>
         </Link>
 
-        {/* Background Image */}
+        {/* Background Image — hero image, load eagerly */}
         <img
           src={Conference}
           alt="Paul presenting"
@@ -151,7 +144,7 @@ const Section1 = () => {
         <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-700 p-6">
           <h2 className="text-2xl mb-4">Contact</h2>
           <button
-            onClick={() => setShowModal(true)}
+            onClick={handleShowModal}
             className="flex items-center gap-1 absolute right-4 top-4 text-white rounded-lg px-3 py-2 text-sm hover:bg-white hover:text-black transition z-20"
             aria-label="More Contacts"
           >
@@ -163,7 +156,7 @@ const Section1 = () => {
         {/* Happy Clients Section */}
         <div className="bg-neutral-900 rounded-xl p-6">
           <div className="flex items-center gap-2 mb-2">
-            {[...Array(5)].map((_, i) => (
+            {STAR_INDICES.map((i) => (
               <svg
                 key={i}
                 className="w-5 h-5 text-yellow-400 fill-current"
@@ -177,19 +170,20 @@ const Section1 = () => {
           <p className="text-neutral-400">Happy Clients</p>
 
           <div className="flex -space-x-2 mt-4">
-            {[CustomerA, CustomerB, CustomerC].map((src, i) => (
+            {CUSTOMER_AVATARS.map((src, i) => (
               <img
                 key={i}
                 src={src}
                 alt={`Client ${i + 1}`}
                 className="w-10 h-10 rounded-full border-2 border-white object-cover"
+                loading="lazy"
               />
             ))}
           </div>
         </div>
       </div>
 
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+      <Modal isOpen={showModal} onClose={handleCloseModal}>
         <h2 className="text-xl font-semibold mb-4">Other Contact Info</h2>
         <p className="text-sm mb-4">
           You can reach me via LinkedIn, Email, or find my socials below.
@@ -203,7 +197,7 @@ const Section1 = () => {
             rel="noopener noreferrer"
             className="flex items-center gap-2 rounded-lg text-blue-800 hover:text-neutral-800 transition"
           >
-            <FontAwesomeIcon icon={faGithub} className="w-5 h-5" />
+            <Github className="w-5 h-5" />
             <span className="text-sm">github.com/jd-paul</span>
           </a>
 
@@ -214,7 +208,7 @@ const Section1 = () => {
             rel="noopener noreferrer"
             className="flex items-center gap-2 rounded-lg text-blue-800 hover:text-neutral-800 transition"
           >
-            <FontAwesomeIcon icon={faLinkedin} className="w-5 h-5" />
+            <Linkedin className="w-5 h-5" />
             <span className="text-sm">linkedin.com/in/paul-san-diego</span>
           </a>
         </div>
