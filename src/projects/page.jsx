@@ -2,8 +2,9 @@ import React, { useCallback } from "react";
 import { useState, useEffect } from "react";
 import Sidebar from "../components/SideBar";
 import AddProjectForm from "./AddProjectForm";
+import EditProjectForm from "./EditProjectForm";
 
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft, ExternalLink, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 import { useProjects } from "../hooks/useProjects";
@@ -11,11 +12,13 @@ import { useProjects } from "../hooks/useProjects";
 const LandingPage = () => {
   const [session, setSession] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [editingProject, setEditingProject] = useState(null);
 
   const { data: projects = [], isLoading: loading, refetch } = useProjects();
 
   const handleToggleForm = useCallback(() => setShowForm((v) => !v), []);
   const handleCloseForm = useCallback(() => setShowForm(false), []);
+  const handleCloseEdit = useCallback(() => setEditingProject(null), []);
 
   useEffect(() => {
     supabase.auth
@@ -44,7 +47,7 @@ const LandingPage = () => {
                 {session && (
                   <button
                     onClick={handleToggleForm}
-                    className="bg-blue-600 px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition"
+                    className="bg-blue-600 px-4 py-2 rounded-lg text-sm hover:bg-blue-500 transition"
                   >
                     {showForm ? "Close Form" : "Add Project"}
                   </button>
@@ -60,7 +63,6 @@ const LandingPage = () => {
             {session && showForm && (
               <div className="mb-6">
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                  {/* Darkened backdrop */}
                   <div
                     className="absolute inset-0 bg-black/70 backdrop-blur-sm"
                     onClick={handleCloseForm}
@@ -71,6 +73,22 @@ const LandingPage = () => {
                       onClose={handleCloseForm}
                     />
                   </div>
+                </div>
+              </div>
+            )}
+
+            {session && editingProject && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div
+                  className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+                  onClick={handleCloseEdit}
+                />
+                <div className="relative z-10 w-full max-w-2xl max-h-screen overflow-y-auto mx-auto my-auto">
+                  <EditProjectForm
+                    project={editingProject}
+                    onSuccess={refetch}
+                    onClose={handleCloseEdit}
+                  />
                 </div>
               </div>
             )}
@@ -129,19 +147,28 @@ const LandingPage = () => {
                       </p>
 
                       {/* Button - Uses database 'project_link' column */}
-                      {project.project_link && (
-                        <div className="mt-3">
+                      <div className="mt-3 flex items-center gap-2 flex-wrap">
+                        {project.project_link && (
                           <a
                             href={project.project_link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-black text-black rounded-lg text-sm hover:bg-black hover:text-white transition w-auto"
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-black text-black rounded-lg text-sm hover:bg-black hover:text-white transition"
                           >
                             Link to project
                             <ExternalLink className="w-4 h-4" />
                           </a>
-                        </div>
-                      )}
+                        )}
+                        {session && (
+                          <button
+                            onClick={() => setEditingProject(project)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-blue-600 text-blue-600 rounded-lg text-sm hover:bg-blue-600 hover:text-white transition"
+                          >
+                            Edit
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
