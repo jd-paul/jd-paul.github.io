@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { supabase } from "../lib/supabaseClient";
 import {
   Upload,
@@ -12,33 +12,82 @@ import {
   AlertCircle,
 } from "lucide-react";
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+
+const isValidUrl = (url) => {
+  if (!url) return true; // optional field
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 const AddProjectForm = ({ onSuccess, onClose }) => {
   const [form, setForm] = useState({
-    title: "", // Changed from name
+    title: "",
     description: "",
     tools: "",
-    project_link: "", // Changed from link
+    project_link: "",
     display_order: "",
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
   const [errorMsg, setErrorMsg] = useState("");
+
   const fileInputRef = useRef(null);
+  const objectUrlRef = useRef(null); // track blob URL for cleanup
+  const timeoutRef = useRef(null);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+      if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleImageSelect = (file) => {
+    if (!file || !file.type.startsWith("image/")) return;
+
+    if (file.size > MAX_FILE_SIZE) {
+      setErrorMsg("Image must be under 5 MB.");
+      setStatus("error");
+      return;
+    }
+
+    // Revoke previous blob URL before creating a new one
+    if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+    const url = URL.createObjectURL(file);
+    objectUrlRef.current = url;
+
+    setImageFile(file);
+    setImagePreview(url);
+    setErrorMsg("");
+    if (status === "error") setStatus("idle");
   };
 
   const handleImageDrop = (e) => {
     e.preventDefault();
-    const file = e.dataTransfer?.files[0] || e.target.files[0];
-    if (!file || !file.type.startsWith("image/")) return;
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
+    handleImageSelect(e.dataTransfer?.files[0]);
+  };
+
+  const handleFileInput = (e) => {
+    handleImageSelect(e.target.files[0]);
   };
 
   const clearImage = () => {
+    if (objectUrlRef.current) {
+      URL.revokeObjectURL(objectUrlRef.current);
+      objectUrlRef.current = null;
+    }
     setImageFile(null);
     setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -46,17 +95,32 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isValidUrl(form.project_link)) {
+      setStatus("error");
+      setErrorMsg("Project link must be a valid URL (e.g. https://github.com/...).");
+      return;
+    }
+
+    const displayOrder = form.display_order
+      ? parseInt(form.display_order, 10)
+      : null;
+    if (form.display_order && isNaN(displayOrder)) {
+      setStatus("error");
+      setErrorMsg("Display order must be a number.");
+      return;
+    }
+
     setStatus("loading");
     setErrorMsg("");
 
     try {
       let image_url = null;
 
-      // Upload image to Supabase Storage if provided
       if (imageFile) {
         const ext = imageFile.name.split(".").pop();
         const fileName = `${Date.now()}.${ext}`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from("project-thumbnails")
           .upload(fileName, imageFile);
 
@@ -68,27 +132,26 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
         image_url = urlData.publicUrl;
       }
 
-      // Insert project row
       const { error: insertError } = await supabase.from("projects").insert([
         {
-          title: form.title, // Matches database 'title'
-          description: form.description,
-          tools: form.tools,
-          project_link: form.project_link || null, // FIX: Changed from 'link' to 'project_link'
-          display_order: form.display_order
-            ? parseInt(form.display_order)
-            : null,
-          image_url: image_url, // Matches database 'image_url'
+          title: form.title.trim(),
+          description: form.description.trim(),
+          tools: form.tools.trim(),
+          project_link: form.project_link.trim() || null,
+          display_order: displayOrder,
+          image_url,
         },
       ]);
       if (insertError) throw insertError;
 
+      if (!mountedRef.current) return;
       setStatus("success");
-      setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         onSuccess?.();
         onClose?.();
       }, 1500);
     } catch (err) {
+      if (!mountedRef.current) return;
       setStatus("error");
       setErrorMsg(err.message || "Something went wrong.");
     }
@@ -115,7 +178,9 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
         </div>
         {onClose && (
           <button
+            type="button"
             onClick={onClose}
+            aria-label="Close"
             className="text-neutral-500 hover:text-white transition p-1 rounded-lg hover:bg-neutral-800"
           >
             <X className="w-5 h-5" />
@@ -140,6 +205,7 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
               <button
                 type="button"
                 onClick={clearImage}
+                aria-label="Remove image"
                 className="absolute top-2 right-2 bg-black/70 hover:bg-black text-white rounded-full p-1.5 transition"
               >
                 <X className="w-3.5 h-3.5" />
@@ -148,16 +214,19 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
             </div>
           ) : (
             <div
+              role="button"
+              tabIndex={0}
               onClick={() => fileInputRef.current?.click()}
               onDrop={handleImageDrop}
               onDragOver={(e) => e.preventDefault()}
+              onKeyDown={(e) => e.key === "Enter" && fileInputRef.current?.click()}
               className="border-2 border-dashed border-neutral-700 hover:border-blue-600 rounded-xl h-36 flex flex-col items-center justify-center gap-2 cursor-pointer transition group"
             >
               <Upload className="w-6 h-6 text-neutral-600 group-hover:text-blue-500 transition" />
               <p className="text-neutral-500 text-sm group-hover:text-neutral-300 transition">
                 Drop image or <span className="text-blue-500">browse</span>
               </p>
-              <p className="text-neutral-600 text-xs">PNG, JPG, WebP</p>
+              <p className="text-neutral-600 text-xs">PNG, JPG, WebP · max 5 MB</p>
             </div>
           )}
           <input
@@ -165,7 +234,7 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
             type="file"
             accept="image/*"
             className="hidden"
-            onChange={handleImageDrop}
+            onChange={handleFileInput}
           />
         </div>
 
@@ -183,11 +252,7 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
         </Field>
 
         {/* Description */}
-        <Field
-          icon={<FileText className="w-4 h-4" />}
-          label="Description"
-          required
-        >
+        <Field icon={<FileText className="w-4 h-4" />} label="Description" required>
           <textarea
             name="description"
             value={form.description}
@@ -201,11 +266,7 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
         </Field>
 
         {/* Tools */}
-        <Field
-          icon={<Wrench className="w-4 h-4" />}
-          label="Tools Used"
-          required
-        >
+        <Field icon={<Wrench className="w-4 h-4" />} label="Tools Used" required>
           <input
             name="tools"
             value={form.tools}
@@ -229,10 +290,7 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
               className="input-field"
             />
           </Field>
-          <Field
-            icon={<span className="text-xs font-bold">#</span>}
-            label="Display Order"
-          >
+          <Field icon={<span className="text-xs font-bold">#</span>} label="Display Order">
             <input
               name="display_order"
               type="number"
@@ -307,7 +365,6 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
   );
 };
 
-// Reusable field wrapper
 const Field = ({ icon, label, required, children }) => (
   <div>
     <label className="flex items-center gap-1.5 text-xs font-medium text-neutral-400 uppercase tracking-wider mb-2">
@@ -319,7 +376,6 @@ const Field = ({ icon, label, required, children }) => (
   </div>
 );
 
-// Inline spinner
 const Loader = () => (
   <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
     <circle

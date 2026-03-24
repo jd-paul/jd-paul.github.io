@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { supabase } from "../lib/supabaseClient";
 import {
   Upload,
@@ -13,6 +13,18 @@ import {
   Trash2,
 } from "lucide-react";
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+
+const isValidUrl = (url) => {
+  if (!url) return true; // optional field
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 const EditProjectForm = ({ project, onSuccess, onClose }) => {
   const [form, setForm] = useState({
     title: project.title ?? "",
@@ -22,32 +34,95 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
     display_order: project.display_order ?? "",
   });
   const [imageFile, setImageFile] = useState(null);
+  // imagePreview may be a remote URL (project.image_url) or a blob URL we created.
+  // Only blob URLs we create should be revoked on cleanup.
   const [imagePreview, setImagePreview] = useState(project.image_url ?? null);
   const [status, setStatus] = useState("idle"); // idle | loading | success | deleting | deleted | error
   const [errorMsg, setErrorMsg] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
+
   const fileInputRef = useRef(null);
+  const blobUrlRef = useRef(null);  // tracks only blob URLs we created
+  const timeoutRef = useRef(null);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+      if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleImageSelect = (file) => {
+    if (!file || !file.type.startsWith("image/")) return;
+
+    if (file.size > MAX_FILE_SIZE) {
+      setErrorMsg("Image must be under 5 MB.");
+      setStatus("error");
+      return;
+    }
+
+    // Revoke previous blob URL (if any) before creating a new one
+    if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current);
+    const url = URL.createObjectURL(file);
+    blobUrlRef.current = url;
+
+    setImageFile(file);
+    setImagePreview(url);
+    setErrorMsg("");
+    if (status === "error") setStatus("idle");
   };
 
   const handleImageDrop = (e) => {
     e.preventDefault();
-    const file = e.dataTransfer?.files[0] || e.target.files[0];
-    if (!file || !file.type.startsWith("image/")) return;
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
+    handleImageSelect(e.dataTransfer?.files[0]);
+  };
+
+  const handleFileInput = (e) => {
+    handleImageSelect(e.target.files[0]);
   };
 
   const clearImage = () => {
+    // Only revoke if it's a blob URL we created
+    if (blobUrlRef.current) {
+      URL.revokeObjectURL(blobUrlRef.current);
+      blobUrlRef.current = null;
+    }
     setImageFile(null);
     setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  const scheduleClose = (delay) => {
+    timeoutRef.current = setTimeout(() => {
+      onSuccess?.();
+      onClose?.();
+    }, delay);
+  };
+
   const handleUpdate = async (e) => {
     e.preventDefault();
+
+    if (!isValidUrl(form.project_link)) {
+      setStatus("error");
+      setErrorMsg("Project link must be a valid URL (e.g. https://github.com/...).");
+      return;
+    }
+
+    const displayOrder = form.display_order
+      ? parseInt(form.display_order, 10)
+      : null;
+    if (form.display_order && isNaN(displayOrder)) {
+      setStatus("error");
+      setErrorMsg("Display order must be a number.");
+      return;
+    }
+
     setStatus("loading");
     setErrorMsg("");
 
@@ -68,30 +143,28 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
           .getPublicUrl(fileName);
         image_url = urlData.publicUrl;
       } else if (!imagePreview) {
-        // User cleared the image
         image_url = null;
       }
 
       const { error: updateError } = await supabase
         .from("projects")
         .update({
-          title: form.title,
-          description: form.description,
-          tools: form.tools,
-          project_link: form.project_link || null,
-          display_order: form.display_order ? parseInt(form.display_order) : null,
+          title: form.title.trim(),
+          description: form.description.trim(),
+          tools: form.tools.trim(),
+          project_link: form.project_link.trim() || null,
+          display_order: displayOrder,
           image_url,
         })
         .eq("id", project.id);
 
       if (updateError) throw updateError;
 
+      if (!mountedRef.current) return;
       setStatus("success");
-      setTimeout(() => {
-        onSuccess?.();
-        onClose?.();
-      }, 1500);
+      scheduleClose(1500);
     } catch (err) {
+      if (!mountedRef.current) return;
       setStatus("error");
       setErrorMsg(err.message || "Something went wrong.");
     }
@@ -109,12 +182,11 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
 
       if (deleteError) throw deleteError;
 
+      if (!mountedRef.current) return;
       setStatus("deleted");
-      setTimeout(() => {
-        onSuccess?.();
-        onClose?.();
-      }, 1200);
+      scheduleClose(1200);
     } catch (err) {
+      if (!mountedRef.current) return;
       setStatus("error");
       setErrorMsg(err.message || "Failed to delete project.");
       setConfirmDelete(false);
@@ -142,7 +214,9 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
         </div>
         {onClose && (
           <button
+            type="button"
             onClick={onClose}
+            aria-label="Close"
             className="text-neutral-500 hover:text-white transition p-1 rounded-lg hover:bg-neutral-800"
           >
             <X className="w-5 h-5" />
@@ -167,6 +241,7 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
               <button
                 type="button"
                 onClick={clearImage}
+                aria-label="Remove image"
                 className="absolute top-2 right-2 bg-black/70 hover:bg-black text-white rounded-full p-1.5 transition"
               >
                 <X className="w-3.5 h-3.5" />
@@ -175,16 +250,19 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
             </div>
           ) : (
             <div
+              role="button"
+              tabIndex={0}
               onClick={() => fileInputRef.current?.click()}
               onDrop={handleImageDrop}
               onDragOver={(e) => e.preventDefault()}
+              onKeyDown={(e) => e.key === "Enter" && fileInputRef.current?.click()}
               className="border-2 border-dashed border-neutral-700 hover:border-blue-600 rounded-xl h-36 flex flex-col items-center justify-center gap-2 cursor-pointer transition group"
             >
               <Upload className="w-6 h-6 text-neutral-600 group-hover:text-blue-500 transition" />
               <p className="text-neutral-500 text-sm group-hover:text-neutral-300 transition">
                 Drop image or <span className="text-blue-500">browse</span>
               </p>
-              <p className="text-neutral-600 text-xs">PNG, JPG, WebP</p>
+              <p className="text-neutral-600 text-xs">PNG, JPG, WebP · max 5 MB</p>
             </div>
           )}
           <input
@@ -192,7 +270,7 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
             type="file"
             accept="image/*"
             className="hidden"
-            onChange={handleImageDrop}
+            onChange={handleFileInput}
           />
         </div>
 
@@ -296,7 +374,6 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
 
         {/* Actions */}
         <div className="flex gap-3">
-          {/* Delete button */}
           {!confirmDelete && (
             <button
               type="button"
@@ -309,7 +386,6 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
             </button>
           )}
 
-          {/* Save button */}
           <button
             type="submit"
             disabled={isLoading || status === "success" || status === "deleted"}
@@ -361,7 +437,7 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
           font-family: inherit;
         }
         .input-field::placeholder { color: #555; }
-        .input-field:focus { border-color: #d97706; box-shadow: 0 0 0 3px rgba(217,119,6,0.12); }
+        .input-field:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
         .input-field:disabled { opacity: 0.5; cursor: not-allowed; }
       `}</style>
     </div>
