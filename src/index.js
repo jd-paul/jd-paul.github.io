@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { supabase } from './lib/supabaseClient';
+import './lib/posthog';
 
 const queryClient = new QueryClient();
 
