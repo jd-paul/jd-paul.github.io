@@ -32,7 +32,7 @@ const NotFound = () => {
               className="flex items-center gap-2 border px-4 py-2.5 border-white text-white rounded-lg text-sm hover:bg-white hover:text-black transition"
               aria-label="View Projects"
             >
-              My Projects
+              Work &amp; Contributions
               <ArrowRight className="w-4 h-4" />
             </button>
           </Link>

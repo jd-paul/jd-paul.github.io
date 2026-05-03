@@ -53,13 +53,13 @@ const Section1 = () => {
     <section className="p-6 font-work-sans" id="about">
       {/* Projects */}
       <div className="flex justify-between items-center mb-3 mt-6">
-        <h2 className="text-2xl font-space-grotesk">My Projects</h2>
+        <h2 className="text-2xl font-space-grotesk">Work &amp; Contributions</h2>
         <Link to="/projects" style={LINK_STYLE}>
           <button
             className="flex items-center gap-1 border px-3 py-2.5 border-white text-white rounded-lg text-sm hover:bg-white hover:text-black transition"
             aria-label="Back to home"
           >
-            My Projects
+            Work &amp; Contributions
             <ArrowRight className="w-4 h-4" />
           </button>
         </Link>
