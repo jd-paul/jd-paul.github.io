@@ -7,7 +7,7 @@ export function useProjects() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("projects")
-        .select("id, title, image_url, description, tools, project_link, display_order")
+        .select("id, title, image_url, description, tools, project_link, display_order, genre")
         .order("display_order", { ascending: true });
       if (error) throw error;
       return data;
