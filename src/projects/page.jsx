@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useState, useEffect } from "react";
 import Sidebar from "../components/SideBar";
 import AddProjectForm from "./AddProjectForm";
@@ -9,12 +9,31 @@ import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 import { useProjects } from "../hooks/useProjects";
 
+// Genre sections in display order
+const GENRE_ORDER = ["Clients", "Open Source", "Projects"];
+// Display labels (DB values stay stable; section headings can be renamed here)
+const GENRE_LABELS = { Clients: "Shipped" };
+
 const LandingPage = () => {
   const [session, setSession] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
 
   const { data: projects = [], isLoading: loading, refetch } = useProjects();
+
+  const groupedProjects = useMemo(() => {
+    const groups = new Map();
+    for (const project of projects) {
+      const genre = project.genre ?? GENRE_ORDER[GENRE_ORDER.length - 1];
+      if (!groups.has(genre)) groups.set(genre, []);
+      groups.get(genre).push(project);
+    }
+    const orderedGenres = GENRE_ORDER.filter((genre) => groups.has(genre));
+    for (const genre of groups.keys()) {
+      if (!orderedGenres.includes(genre)) orderedGenres.push(genre);
+    }
+    return orderedGenres.map((genre) => [genre, groups.get(genre)]);
+  }, [projects]);
 
   const handleToggleForm = useCallback(() => setShowForm((v) => !v), []);
   const handleCloseForm = useCallback(() => setShowForm(false), []);
@@ -41,7 +60,7 @@ const LandingPage = () => {
         <div className="space-y-8 bg-[#0a0a0a]">
           <section className="p-6 font-work-sans">
             <div className="flex justify-between items-center mb-3 mt-6">
-              <h2 className="text-2xl font-space-grotesk">Projects Page</h2>
+              <h2 className="text-2xl font-space-grotesk">Work & Contributions</h2>
 
               <div className="flex gap-3">
                 {session && (
@@ -110,65 +129,74 @@ const LandingPage = () => {
               </div>
             )}
 
-            {/* Projects Grid */}
+            {/* Projects Grid - grouped by genre */}
             {!loading && projects.length > 0 && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {projects.map((project) => (
-                  <div
-                    key={project.id}
-                    className="bg-neutral-100 rounded-lg shadow-md overflow-hidden flex flex-col"
-                  >
-                    {/* Image - Uses database 'image_url' column */}
-                    <div className="m-3 mb-1 rounded-md overflow-hidden border border-blue-600 shadow-sm shadow-blue-600/20">
-                      <img
-                        src={project.image_url}
-                        alt={project.title}
-                        className="w-full h-40 object-cover"
-                        loading="lazy"
-                      />
-                    </div>
+              <div className="space-y-10">
+                {groupedProjects.map(([genre, genreProjects]) => (
+                  <div key={genre}>
+                    <h3 className="text-xl font-space-grotesk mb-4">
+                      {GENRE_LABELS[genre] ?? genre}
+                    </h3>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                      {genreProjects.map((project) => (
+                        <div
+                          key={project.id}
+                          className="bg-neutral-100 rounded-lg shadow-md overflow-hidden flex flex-col"
+                        >
+                          {/* Image - Uses database 'image_url' column */}
+                          <div className="m-3 mb-1 rounded-md overflow-hidden border border-blue-600 shadow-sm shadow-blue-600/20">
+                            <img
+                              src={project.image_url}
+                              alt={project.title}
+                              className="w-full h-40 object-cover"
+                              loading="lazy"
+                            />
+                          </div>
 
-                    {/* Content */}
-                    <div className="pt-1 p-4 flex flex-col flex-1">
-                      {/* Title - Uses database 'title' column */}
-                      <h3 className="text-lg font-semibold text-neutral-900">
-                        {project.title}
-                      </h3>
-                      <p className="text-sm text-neutral-700 mt-2 flex-1">
-                        {project.description}
-                      </p>
+                          {/* Content */}
+                          <div className="pt-1 p-4 flex flex-col flex-1">
+                            {/* Title - Uses database 'title' column */}
+                            <h3 className="text-lg font-semibold text-neutral-900">
+                              {project.title}
+                            </h3>
+                            <p className="text-sm text-neutral-700 mt-2 flex-1">
+                              {project.description}
+                            </p>
 
-                      {/* Tools */}
-                      <p className="text-xs text-neutral-700 mt-3">
-                        <span className="font-medium text-neutral-800">
-                          Tools:
-                        </span>{" "}
-                        {project.tools}
-                      </p>
+                            {/* Tools */}
+                            <p className="text-xs text-neutral-700 mt-3">
+                              <span className="font-medium text-neutral-800">
+                                Tools:
+                              </span>{" "}
+                              {project.tools}
+                            </p>
 
-                      {/* Button - Uses database 'project_link' column */}
-                      <div className="mt-3 flex items-center gap-2 flex-wrap">
-                        {project.project_link && (
-                          <a
-                            href={project.project_link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-black text-black rounded-lg text-sm hover:bg-black hover:text-white transition"
-                          >
-                            Link to project
-                            <ExternalLink className="w-4 h-4" />
-                          </a>
-                        )}
-                        {session && (
-                          <button
-                            onClick={() => setEditingProject(project)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-blue-600 text-blue-600 rounded-lg text-sm hover:bg-blue-600 hover:text-white transition"
-                          >
-                            Edit
-                            <Pencil className="w-3.5 h-3.5" />
-                          </button>
-                        )}
-                      </div>
+                            {/* Button - Uses database 'project_link' column */}
+                            <div className="mt-3 flex items-center gap-2 flex-wrap">
+                              {project.project_link && (
+                                <a
+                                  href={project.project_link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-black text-black rounded-lg text-sm hover:bg-black hover:text-white transition"
+                                >
+                                  Link to project
+                                  <ExternalLink className="w-4 h-4" />
+                                </a>
+                              )}
+                              {session && (
+                                <button
+                                  onClick={() => setEditingProject(project)}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-blue-600 text-blue-600 rounded-lg text-sm hover:bg-blue-600 hover:text-white transition"
+                                >
+                                  Edit
+                                  <Pencil className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ))}
