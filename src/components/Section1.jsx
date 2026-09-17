@@ -1,7 +1,15 @@
 import React, { useCallback } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-import { ArrowRight, ArrowDownLeft, Github, Linkedin } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowDown,
+  ArrowUp,
+  Github,
+  Linkedin,
+  Mail,
+  Pencil,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 import {
@@ -22,12 +30,14 @@ import {
 } from "react-icons/si";
 
 import Conference from "../assets/img/img_working.png";
-import CustomerA from "../assets/img/img_customer-a.jpeg";
-import CustomerB from "../assets/img/img_gsyp-logo.png";
-import CustomerC from "../assets/img/img_customer-c.jpg";
+import Graduation from "../assets/img/img_graduation.jpeg";
 
-import Modal from "./Modal";
+import AddExperienceForm from "../experience/AddExperienceForm";
+import EditExperienceForm from "../experience/EditExperienceForm";
 import { useProjects } from "../hooks/useProjects";
+import { useExperience } from "../hooks/useExperience";
+import { supabase } from "../lib/supabaseClient";
+import { DEBUG_ADMIN } from "../lib/debugAdmin";
 
 // Static data lives at module scope — created once, never re-created on render
 const TECH_STACK = [
@@ -52,20 +62,74 @@ const CERTIFICATIONS = [
   "Stanford Machine Learning Specialization",
 ];
 
-const STAR_INDICES = [0, 1, 2, 3, 4];
-
-const CUSTOMER_AVATARS = [CustomerA, CustomerB, CustomerC];
-
 const LINK_STYLE = { textDecoration: "none" };
 
 const Section1 = () => {
-  const [showModal, setShowModal] = useState(false);
+  const [session, setSession] = useState(null);
+  const [showExpForm, setShowExpForm] = useState(false);
+  const [editingExperience, setEditingExperience] = useState(null);
+  const [movingId, setMovingId] = useState(null);
 
   const { data: allProjects = [] } = useProjects();
   const topProjects = allProjects.slice(0, 2);
 
-  const handleShowModal = useCallback(() => setShowModal(true), []);
-  const handleCloseModal = useCallback(() => setShowModal(false), []);
+  const {
+    data: experiences = [],
+    isLoading: loadingExperience,
+    refetch: refetchExperience,
+  } = useExperience();
+
+  const isAdmin = Boolean(session) || DEBUG_ADMIN;
+
+  const handleToggleExpForm = useCallback(() => setShowExpForm((v) => !v), []);
+  const handleCloseExpForm = useCallback(() => setShowExpForm(false), []);
+  const handleCloseEditExp = useCallback(() => setEditingExperience(null), []);
+
+  useEffect(() => {
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => setSession(session));
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Swap display_order with the adjacent entry; null falls back to 1-based position
+  const handleMoveExperience = async (index, direction) => {
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= experiences.length) return;
+
+    const current = experiences[index];
+    const target = experiences[targetIndex];
+    const currentOrder = current.display_order ?? index + 1;
+    const targetOrder = target.display_order ?? targetIndex + 1;
+
+    setMovingId(current.id);
+    try {
+      const { error: firstError } = await supabase
+        .from("experience")
+        .update({ display_order: targetOrder })
+        .eq("id", current.id);
+      if (firstError) throw firstError;
+
+      const { error: secondError } = await supabase
+        .from("experience")
+        .update({ display_order: currentOrder })
+        .eq("id", target.id);
+      if (secondError) throw secondError;
+
+      await refetchExperience();
+    } catch (err) {
+      console.error("Failed to reorder experience:", err.message);
+    } finally {
+      setMovingId(null);
+    }
+  };
 
   return (
     <section className="p-6 font-work-sans" id="about">
@@ -110,6 +174,113 @@ const Section1 = () => {
         ))}
       </div>
 
+      {/* Experiences — sits between Projects and Stack */}
+      <div className="bg-neutral-900 rounded-xl p-6 mt-6" id="experience">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-space-grotesk">Experiences</h2>
+
+          {isAdmin && (
+            <button
+              onClick={handleToggleExpForm}
+              className="bg-blue-600 px-4 py-2 rounded-lg text-sm hover:bg-blue-500 transition"
+            >
+              {showExpForm ? "Close Form" : "Add Experience"}
+            </button>
+          )}
+        </div>
+
+        {loadingExperience && (
+          <p className="text-gray-400 text-sm">Loading experience...</p>
+        )}
+
+        {!loadingExperience && experiences.length === 0 && (
+          <p className="text-gray-500 text-sm">
+            Experience coming soon.{" "}
+            {isAdmin && "Add one using the button above."}
+          </p>
+        )}
+
+        {!loadingExperience && experiences.length > 0 && (
+          <ul className="divide-y divide-neutral-800">
+            {experiences.map((exp, index) => (
+              <li
+                key={exp.id}
+                className="flex items-center justify-between gap-4 py-3"
+              >
+                <div className="min-w-0">
+                  <p className="font-semibold text-white">{exp.role}</p>
+                  <p className="text-sm text-blue-400 mt-0.5">{exp.company}</p>
+                </div>
+                <span className="text-xs text-neutral-400 whitespace-nowrap">
+                  {exp.dates}
+                </span>
+
+                {isAdmin && (
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      onClick={() => setEditingExperience(exp)}
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-blue-600 text-blue-400 rounded-lg text-xs hover:bg-blue-600 hover:text-white transition"
+                    >
+                      Edit
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleMoveExperience(index, -1)}
+                      disabled={index === 0 || movingId !== null}
+                      aria-label="Move up"
+                      className="inline-flex items-center px-2 py-1.5 border border-neutral-600 text-neutral-300 rounded-lg hover:bg-neutral-800 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      <ArrowUp className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleMoveExperience(index, 1)}
+                      disabled={
+                        index === experiences.length - 1 || movingId !== null
+                      }
+                      aria-label="Move down"
+                      className="inline-flex items-center px-2 py-1.5 border border-neutral-600 text-neutral-300 rounded-lg hover:bg-neutral-800 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      <ArrowDown className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {isAdmin && showExpForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={handleCloseExpForm}
+          />
+          <div className="relative z-10 w-full max-w-2xl max-h-screen overflow-y-auto mx-auto my-auto">
+            <AddExperienceForm
+              onSuccess={refetchExperience}
+              onClose={handleCloseExpForm}
+            />
+          </div>
+        </div>
+      )}
+
+      {isAdmin && editingExperience && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={handleCloseEditExp}
+          />
+          <div className="relative z-10 w-full max-w-2xl max-h-screen overflow-y-auto mx-auto my-auto">
+            <EditExperienceForm
+              experience={editingExperience}
+              onSuccess={refetchExperience}
+              onClose={handleCloseEditExp}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Stack */}
       <div className="bg-blue-600 rounded-xl p-6 mt-6">
         <div className="flex justify-between items-center mb-4">
@@ -134,11 +305,11 @@ const Section1 = () => {
           <h3 className="text-sm font-semibold uppercase tracking-wider text-white/80 mb-3 font-space-grotesk">
             Certifications
           </h3>
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex gap-3 flex-wrap">
             {CERTIFICATIONS.map((cert) => (
               <span
                 key={cert}
-                className="rounded-full px-3 py-1.5 text-xs font-medium bg-white text-custom-dark_main border border-white/25"
+                className="rounded-md px-3 py-2 text-sm font-semibold bg-white text-custom-dark_main"
               >
                 {cert}
               </span>
@@ -154,16 +325,6 @@ const Section1 = () => {
         {/* Overlay */}
         <div className="absolute inset-0 bg-black opacity-40 z-10" />
 
-        <Link to="/about" style={LINK_STYLE}>
-          <button
-            className="flex items-center gap-1 absolute right-4 top-4 text-white  rounded-lg px-3 py-2 text-sm hover:bg-white hover:text-black transition z-20"
-            aria-label="About Me"
-          >
-            About Me
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </Link>
-
         {/* Background Image — hero image, load eagerly */}
         <img
           src={Conference}
@@ -172,81 +333,53 @@ const Section1 = () => {
         />
       </div>
 
-      {/* Contact and Clients Sections */}
+      {/* Contact and Graduation Sections */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
         {/* Contact Section */}
-        <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-700 p-6">
-          <h2 className="text-2xl mb-4">Contact</h2>
-          <button
-            onClick={handleShowModal}
-            className="flex items-center gap-1 absolute right-4 top-4 text-white rounded-lg px-3 py-2 text-sm hover:bg-white hover:text-black transition z-20"
-            aria-label="More Contacts"
-          >
-            More Contacts
-            <ArrowDownLeft className="w-4 h-4" />
-          </button>
+        <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-700 p-6 flex flex-col">
+          <h2 className="text-2xl font-space-grotesk">Contact</h2>
+
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-auto">
+            <a
+              href="https://www.linkedin.com/in/paul-san-diego/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white transition"
+            >
+              <Linkedin className="w-4 h-4" />
+              LinkedIn
+            </a>
+            <a
+              href="https://github.com/jd-paul"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white transition"
+            >
+              <Github className="w-4 h-4" />
+              GitHub
+            </a>
+            <a
+              href="mailto:johnpaul20030@gmail.com"
+              className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white transition"
+            >
+              <Mail className="w-4 h-4" />
+              johnpaul20030@gmail.com
+            </a>
+          </div>
         </div>
 
-        {/* Happy Clients Section */}
-        <div className="bg-neutral-900 rounded-xl p-6">
-          <div className="flex items-center gap-2 mb-2">
-            {STAR_INDICES.map((i) => (
-              <svg
-                key={i}
-                className="w-5 h-5 text-yellow-400 fill-current"
-                viewBox="0 0 20 20"
-              >
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-            ))}
-          </div>
-          <h3 className="text-4xl font-bold mb-4">100%</h3>
-          <p className="text-neutral-400">Happy Clients</p>
-
-          <div className="flex -space-x-2 mt-4">
-            {CUSTOMER_AVATARS.map((src, i) => (
-              <img
-                key={i}
-                src={src}
-                alt={`Client ${i + 1}`}
-                className="w-10 h-10 rounded-full border-2 border-white object-cover"
-                loading="lazy"
-              />
-            ))}
-          </div>
+        {/* Graduation photo — same darkened treatment as the About Me image */}
+        <div className="relative overflow-hidden rounded-xl h-[225px]">
+          <img
+            src={Graduation}
+            alt="John Paul San Diego at his graduation ceremony"
+            className="absolute inset-0 w-full h-full object-cover object-[center_32%]"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-black opacity-40 z-10" />
         </div>
       </div>
 
-      <Modal isOpen={showModal} onClose={handleCloseModal}>
-        <h2 className="text-xl font-semibold mb-4">Other Contact Info</h2>
-        <p className="text-sm mb-4">
-          You can reach me via LinkedIn, Email, or find my socials below.
-        </p>
-
-        <div className="flex gap-4 flex-wrap">
-          {/* GitHub */}
-          <a
-            href="https://github.com/jd-paul"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 rounded-lg text-blue-800 hover:text-neutral-800 transition"
-          >
-            <Github className="w-5 h-5" />
-            <span className="text-sm">github.com/jd-paul</span>
-          </a>
-
-          {/* LinkedIn */}
-          <a
-            href="https://www.linkedin.com/in/paul-san-diego/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 rounded-lg text-blue-800 hover:text-neutral-800 transition"
-          >
-            <Linkedin className="w-5 h-5" />
-            <span className="text-sm">linkedin.com/in/paul-san-diego</span>
-          </a>
-        </div>
-      </Modal>
     </section>
   );
 };

@@ -1,7 +1,6 @@
 import React from "react";
 import Sidebar from "./SideBar";
 import Section1 from "./Section1";
-import Experience from "./Experience";
 import Section5 from "./Section5";
 
 const LandingPage = () => {
@@ -11,7 +10,6 @@ const LandingPage = () => {
         <Sidebar />
         <div className="space-y-8 bg-[#0a0a0a]">
           <Section1 />
-          <Experience />
           <Section5 />
         </div>
       </div>
