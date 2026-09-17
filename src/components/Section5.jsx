@@ -24,7 +24,7 @@ const Section5 = () => {
       </div>
 
       <div className="border-t border-neutral-700 mt-12 pt-6 text-center text-neutral-400 text-sm">
-        © 2025 John Paul San Diego · Designed & Built by me
+        © 2026 John Paul San Diego · Designed & Built by me
       </div>
     </footer>
   );

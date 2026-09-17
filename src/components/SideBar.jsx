@@ -54,9 +54,9 @@ const Sidebar = () => {
         {/* Bio */}
         <div className="space-y-6">
           <p className="text-gray-300 text-lg leading-relaxed">
-            I'm a Computer Science student at King's College London.{" "}
+            I'm a Computer Science graduate from King's College London.{" "}
             <br className="mb-1" />
-            Software engineer. KCL Tech Lead. King's Labs.
+            SWE @ Pepsi Cola Products Philippines. Ex-MedibleGo. Ex-SmileShot.
           </p>
           {/* <button className="border border-white rounded-full px-4 py-2 text-sm hover:bg-white hover:text-black transition">
             More about Me
@@ -91,7 +91,7 @@ const Sidebar = () => {
           <div className="space-y-4">
             <div className="text-gray-400 text-sm">
               <p>johnpaul20030@gmail.com</p>
-              <p>© 2025 John Paul San Diego</p>
+              <p>© 2026 John Paul San Diego</p>
             </div>
 
             <button

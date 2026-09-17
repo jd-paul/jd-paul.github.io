@@ -10,8 +10,16 @@ import {
   FaReact,
   FaDocker,
   FaGithub,
-  FaFeather,
+  FaAws,
 } from "react-icons/fa";
+import {
+  SiTypescript,
+  SiNextdotjs,
+  SiPostgresql,
+  SiMongodb,
+  SiTailwindcss,
+  SiSupabase,
+} from "react-icons/si";
 
 import Conference from "../assets/img/img_working.png";
 import CustomerA from "../assets/img/img_customer-a.jpeg";
@@ -24,14 +32,24 @@ import { useProjects } from "../hooks/useProjects";
 // Static data lives at module scope — created once, never re-created on render
 const TECH_STACK = [
   { name: "Python", Icon: FaPython, color: "#3776AB" },
+  { name: "TypeScript", Icon: SiTypescript, color: "#3178C6" },
   { name: "Java", Icon: FaJava, color: "#007396" },
   { name: "React", Icon: FaReact, color: "#61DBFB" },
+  { name: "Next.js", Icon: SiNextdotjs, color: "#000000" },
+  { name: "PostgreSQL", Icon: SiPostgresql, color: "#4169E1" },
+  { name: "MongoDB", Icon: SiMongodb, color: "#47A248" },
   { name: "Docker", Icon: FaDocker, color: "#2496ED" },
+  { name: "AWS", Icon: FaAws, color: "#232F3E" },
+  { name: "Tailwind CSS", Icon: SiTailwindcss, color: "#06B6D4" },
+  { name: "Supabase", Icon: SiSupabase, color: "#3ECF8E" },
   { name: "GitHub", Icon: FaGithub, color: "#181717" },
-  { name: "Numpy", Icon: null, color: "#013243" },
-  { name: "Supabase", Icon: null, color: "#3ECF8E" },
-  { name: "Apache Commons Math", Icon: FaFeather, color: "#D42029" },
-  { name: "Adobe", Icon: null, color: "#FF0000" },
+];
+
+const CERTIFICATIONS = [
+  "AWS Cloud Practitioner Essentials",
+  "IBM Data Science Professional",
+  "Meta Front-End Developer",
+  "Stanford Machine Learning Specialization",
 ];
 
 const STAR_INDICES = [0, 1, 2, 3, 4];
@@ -110,6 +128,22 @@ const Section1 = () => {
               {tech.name}
             </div>
           ))}
+        </div>
+
+        <div className="border-t border-white/25 mt-6 pt-4">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-white/80 mb-3 font-space-grotesk">
+            Certifications
+          </h3>
+          <div className="flex gap-2 flex-wrap">
+            {CERTIFICATIONS.map((cert) => (
+              <span
+                key={cert}
+                className="rounded-full px-3 py-1.5 text-xs font-medium bg-white text-custom-dark_main border border-white/25"
+              >
+                {cert}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
 
