@@ -21,3 +21,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# agent skills & tooling
+/.agents/
+/.claude/skills/
+/agent/
+skills-lock.json
+/.playwright-mcp/
