@@ -8,11 +8,10 @@ import { ArrowLeft, ExternalLink, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 import { useProjects } from "../hooks/useProjects";
+import { getGenreLabel } from "../lib/projectLabels";
 
 // Genre sections in display order
-const GENRE_ORDER = ["Clients", "Open Source", "Projects"];
-// Display labels (DB values stay stable; section headings can be renamed here)
-const GENRE_LABELS = { Clients: "Shipped" };
+const GENRE_ORDER = ["Clients", "Open Source", "Contributions", "Projects"];
 
 const LandingPage = () => {
   const [session, setSession] = useState(null);
@@ -135,7 +134,7 @@ const LandingPage = () => {
                 {groupedProjects.map(([genre, genreProjects]) => (
                   <div key={genre}>
                     <h3 className="text-xl font-space-grotesk mb-4">
-                      {GENRE_LABELS[genre] ?? genre}
+                      {getGenreLabel(genre)}
                     </h3>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                       {genreProjects.map((project) => (

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { supabase } from "../lib/supabaseClient";
+import { GENRE_LABELS } from "../lib/projectLabels";
 import {
   Upload,
   X,
@@ -31,6 +32,7 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
     tools: "",
     project_link: "",
     display_order: "",
+    genre: "Projects",
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -43,6 +45,7 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
   const mountedRef = useRef(true);
 
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
       mountedRef.current = false;
       if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
@@ -98,7 +101,9 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
 
     if (!isValidUrl(form.project_link)) {
       setStatus("error");
-      setErrorMsg("Project link must be a valid URL (e.g. https://github.com/...).");
+      setErrorMsg(
+        "Project link must be a valid URL (e.g. https://github.com/...).",
+      );
       return;
     }
 
@@ -139,6 +144,7 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
           tools: form.tools.trim(),
           project_link: form.project_link.trim() || null,
           display_order: displayOrder,
+          genre: form.genre,
           image_url,
         },
       ]);
@@ -219,14 +225,18 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
               onClick={() => fileInputRef.current?.click()}
               onDrop={handleImageDrop}
               onDragOver={(e) => e.preventDefault()}
-              onKeyDown={(e) => e.key === "Enter" && fileInputRef.current?.click()}
+              onKeyDown={(e) =>
+                e.key === "Enter" && fileInputRef.current?.click()
+              }
               className="border-2 border-dashed border-neutral-700 hover:border-blue-600 rounded-xl h-36 flex flex-col items-center justify-center gap-2 cursor-pointer transition group"
             >
               <Upload className="w-6 h-6 text-neutral-600 group-hover:text-blue-500 transition" />
               <p className="text-neutral-500 text-sm group-hover:text-neutral-300 transition">
                 Drop image or <span className="text-blue-500">browse</span>
               </p>
-              <p className="text-neutral-600 text-xs">PNG, JPG, WebP · max 5 MB</p>
+              <p className="text-neutral-600 text-xs">
+                PNG, JPG, WebP · max 5 MB
+              </p>
             </div>
           )}
           <input
@@ -252,7 +262,11 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
         </Field>
 
         {/* Description */}
-        <Field icon={<FileText className="w-4 h-4" />} label="Description" required>
+        <Field
+          icon={<FileText className="w-4 h-4" />}
+          label="Description"
+          required
+        >
           <textarea
             name="description"
             value={form.description}
@@ -266,7 +280,11 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
         </Field>
 
         {/* Tools */}
-        <Field icon={<Wrench className="w-4 h-4" />} label="Tools Used" required>
+        <Field
+          icon={<Wrench className="w-4 h-4" />}
+          label="Tools Used"
+          required
+        >
           <input
             name="tools"
             value={form.tools}
@@ -276,6 +294,29 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
             placeholder="e.g. React, Node.js, MongoDB"
             className="input-field"
           />
+        </Field>
+
+        {/* Genre */}
+        <Field
+          icon={<span className="text-xs font-bold">G</span>}
+          label="Genre"
+          required
+        >
+          <select
+            name="genre"
+            value={form.genre}
+            onChange={handleChange}
+            required
+            disabled={isLoading}
+            className="input-field"
+          >
+            <option value="Projects">{GENRE_LABELS["Projects"]}</option>
+            <option value="Open Source">{GENRE_LABELS["Open Source"]}</option>
+            <option value="Contributions">
+              {GENRE_LABELS["Contributions"]}
+            </option>
+            <option value="Clients">{GENRE_LABELS["Clients"]}</option>
+          </select>
         </Field>
 
         {/* Two column: Link + Display Order */}
@@ -290,7 +331,10 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
               className="input-field"
             />
           </Field>
-          <Field icon={<span className="text-xs font-bold">#</span>} label="Display Order">
+          <Field
+            icon={<span className="text-xs font-bold">#</span>}
+            label="Display Order"
+          >
             <input
               name="display_order"
               type="number"

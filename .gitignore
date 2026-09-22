@@ -28,3 +28,5 @@ yarn-error.log*
 /agent/
 skills-lock.json
 /.playwright-mcp/
+
+.env

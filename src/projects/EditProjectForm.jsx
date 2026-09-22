@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { supabase } from "../lib/supabaseClient";
+import { GENRE_LABELS } from "../lib/projectLabels";
 import {
   Upload,
   X,
@@ -32,6 +33,7 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
     tools: project.tools ?? "",
     project_link: project.project_link ?? "",
     display_order: project.display_order ?? "",
+    genre: project.genre ?? "Projects",
   });
   const [imageFile, setImageFile] = useState(null);
   // imagePreview may be a remote URL (project.image_url) or a blob URL we created.
@@ -47,6 +49,7 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
   const mountedRef = useRef(true);
 
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
       mountedRef.current = false;
       if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current);
@@ -154,6 +157,7 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
           tools: form.tools.trim(),
           project_link: form.project_link.trim() || null,
           display_order: displayOrder,
+          genre: form.genre,
           image_url,
         })
         .eq("id", project.id);
@@ -312,6 +316,23 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
             placeholder="e.g. React, Node.js, MongoDB"
             className="input-field"
           />
+        </Field>
+
+        {/* Genre */}
+        <Field icon={<span className="text-xs font-bold">G</span>} label="Genre" required>
+          <select
+            name="genre"
+            value={form.genre}
+            onChange={handleChange}
+            required
+            disabled={isLoading}
+            className="input-field"
+          >
+            <option value="Projects">{GENRE_LABELS["Projects"]}</option>
+            <option value="Open Source">{GENRE_LABELS["Open Source"]}</option>
+            <option value="Contributions">{GENRE_LABELS["Contributions"]}</option>
+            <option value="Clients">{GENRE_LABELS["Clients"]}</option>
+          </select>
         </Field>
 
         {/* Two column: Link + Display Order */}
