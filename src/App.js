@@ -9,6 +9,7 @@ const RamManagerPage = lazy(() => import("./projects/ram-manager/index.jsx"));
 const RamManagerPrivacyPage = lazy(() => import("./projects/ram-manager/privacy.jsx"));
 const AboutPage = lazy(() => import("./about/page.jsx"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage.jsx"));
+const ImageOptimizerPage = lazy(() => import("./pages/ImageOptimizerPage.jsx"));
 
 const PAGE_TITLES = {
   "/": "John Paul San Diego | Software Engineer",
@@ -16,6 +17,7 @@ const PAGE_TITLES = {
   "/projects/ram-manager": "RAM Manager | John Paul San Diego",
   "/projects/ram-manager/privacy": "Privacy Policy | RAM Manager",
   "/about": "About | John Paul San Diego",
+  "/admin/image-optimizer": "Image Optimizer | Admin",
 };
 
 function PageViewTracker() {
@@ -40,6 +42,7 @@ function App() {
             <Route path="/projects/ram-manager" element={<RamManagerPage />} />
             <Route path="/projects/ram-manager/privacy" element={<RamManagerPrivacyPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/admin/image-optimizer" element={<ImageOptimizerPage />} />
 
             {/* Redirect common typos / singular forms to the correct route */}
             <Route path="/project" element={<Navigate to="/projects" replace />} />
