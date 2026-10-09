@@ -3,19 +3,22 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Portfolio</title>
+    <title>Redirecting…</title>
     <script>
-      // GitHub Pages serves this file for any URL it can't find (e.g. /blah, /project).
-      // Since the app uses HashRouter, all client-side routes live after the `#`.
-      // We redirect /some/path → /#/some/path so React Router can handle it —
-      // matching a redirect route (e.g. /project → /projects) or falling through to 404.
+      // GitHub Pages serves this file for any URL that isn't a real file.
+      // SPA fallback: bounce to /?p=/the/requested/path (with query preserved)
+      // so index.html can restore the clean URL via history.replaceState
+      // before React Router reads window.location. Real files — index.html,
+      // static pages like /ram-manager/privacy.html, images — are served
+      // directly and never hit this.
       (function () {
-        var path = window.location.pathname;
-        var search = window.location.search;
-        // Avoid redirect loop — root path is served correctly by GH Pages
-        if (path !== "/") {
-          window.location.replace("/#" + path + search);
-        }
+        var l = window.location;
+        var path = l.pathname.slice(1); // strip leading /
+        var search = l.search.slice(1); // strip leading ?
+        var target = "/?p=/" + path.replace(/&/g, "~and~");
+        if (search) target += "&" + search.replace(/&/g, "~and~");
+        if (l.hash) target += l.hash;
+        l.replace(target);
       })();
     </script>
   </head>
