@@ -4,40 +4,78 @@
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content="#000000" />
+
+    <!-- Primary SEO -->
+    <title>John Paul San Diego | Software Engineer</title>
     <meta
       name="description"
-      content="Web site created using create-react-app"
+      content="Software engineer at Pepsi Cola Products Philippines and KCL Computer Science graduate. View my projects, experience, certifications, and get in touch."
     />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+    <link rel="canonical" href="https://jd-paul.github.io/" />
+    <meta name="robots" content="index, follow" />
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>Portfolio</title>
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://jd-paul.github.io/" />
+    <meta property="og:title" content="John Paul San Diego | Software Engineer" />
+    <meta
+      property="og:description"
+      content="Software engineer at Pepsi Cola Products Philippines and KCL Computer Science graduate. View my projects, experience, certifications, and get in touch."
+    />
+    <meta property="og:image" content="https://jd-paul.github.io/og-image.jpg" />
+    <meta
+      property="og:image:alt"
+      content="John Paul San Diego presenting at a tech event"
+    />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="John Paul San Diego | Software Engineer" />
+    <meta
+      name="twitter:description"
+      content="Software engineer at Pepsi Cola Products Philippines and KCL Computer Science graduate. View my projects, experience, certifications, and get in touch."
+    />
+    <meta name="twitter:image" content="https://jd-paul.github.io/og-image.jpg" />
+
+    <!-- Structured data: Person -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "John Paul San Diego",
+        "url": "https://jd-paul.github.io/",
+        "image": "https://jd-paul.github.io/og-image.jpg",
+        "jobTitle": "Software Engineer",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Pepsi Cola Products Philippines"
+        },
+        "alumniOf": {
+          "@type": "CollegeOrUniversity",
+          "name": "King's College London"
+        },
+        "email": "mailto:johnpaul20030@gmail.com",
+        "sameAs": [
+          "https://github.com/jd-paul",
+          "https://www.linkedin.com/in/paul-san-diego/"
+        ]
+      }
+    </script>
+
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://bwyzozumozzopsviojjc.supabase.co" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900;1,100..900&family=Space+Grotesk:wght@300;400;500;700&family=Work+Sans:wght@300;400;500;600;700&display=swap"
+    />
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
   </body>
 </html>

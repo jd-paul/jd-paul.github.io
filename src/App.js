@@ -10,10 +10,20 @@ const RamManagerPrivacyPage = lazy(() => import("./projects/ram-manager/privacy.
 const AboutPage = lazy(() => import("./about/page.jsx"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage.jsx"));
 
+const PAGE_TITLES = {
+  "/": "John Paul San Diego | Software Engineer",
+  "/projects": "Projects | John Paul San Diego",
+  "/projects/ram-manager": "RAM Manager | John Paul San Diego",
+  "/projects/ram-manager/privacy": "Privacy Policy | RAM Manager",
+  "/about": "About | John Paul San Diego",
+};
+
 function PageViewTracker() {
   const location = useLocation();
   useEffect(() => {
-    posthog.capture('$pageview');
+    document.title =
+      PAGE_TITLES[location.pathname] ?? "Page Not Found | John Paul San Diego";
+    posthog.capture("$pageview");
   }, [location]);
   return null;
 }
