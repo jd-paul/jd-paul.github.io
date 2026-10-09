@@ -1,6 +1,6 @@
 import "./App.css";
 import { lazy, Suspense, useEffect } from "react";
-import { HashRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import posthog from "./lib/posthog";
 
 const LandingPage = lazy(() => import("./components/LandingPage.jsx"));

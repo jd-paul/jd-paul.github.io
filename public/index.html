@@ -4,6 +4,23 @@
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      // SPA fallback for GitHub Pages. 404.html bounces unknown paths here as
+      // /?p=/the/path — restore the clean URL before React Router reads it.
+      // Also migrates old HashRouter links (/#/projects/...) to clean paths.
+      (function () {
+        var hash = window.location.hash;
+        if (hash.length > 2 && hash.charAt(1) === "/") {
+          window.history.replaceState(null, "", hash.slice(1));
+        }
+        var m = window.location.search.match(/^\?p=([^&]*)(?:&(.*))?$/);
+        if (m) {
+          var path = m[1].replace(/~and~/g, "&");
+          var rest = m[2] ? "?" + m[2].replace(/~and~/g, "&") : "";
+          window.history.replaceState(null, "", path + rest + window.location.hash);
+        }
+      })();
+    </script>
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content="#000000" />
 
