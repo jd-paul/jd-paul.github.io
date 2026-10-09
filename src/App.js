@@ -6,6 +6,7 @@ import posthog from "./lib/posthog";
 const LandingPage = lazy(() => import("./components/LandingPage.jsx"));
 const ProjectsPage = lazy(() => import("./projects/page.jsx"));
 const RamManagerPage = lazy(() => import("./projects/ram-manager/index.jsx"));
+const RamManagerPrivacyPage = lazy(() => import("./projects/ram-manager/privacy.jsx"));
 const AboutPage = lazy(() => import("./about/page.jsx"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage.jsx"));
 
@@ -27,6 +28,7 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/projects" element={<ProjectsPage />} />
             <Route path="/projects/ram-manager" element={<RamManagerPage />} />
+            <Route path="/projects/ram-manager/privacy" element={<RamManagerPrivacyPage />} />
             <Route path="/about" element={<AboutPage />} />
 
             {/* Redirect common typos / singular forms to the correct route */}

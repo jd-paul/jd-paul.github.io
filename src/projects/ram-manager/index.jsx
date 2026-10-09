@@ -1,33 +1,7 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ExternalLink } from "lucide-react";
-
-// Notion Light colour palette (RAM Manager's default theme)
-const NOTION = {
-  bgPrimary: "rgb(255, 255, 255)",
-  bgSecondary: "rgb(244, 245, 246)",
-  bgTertiary: "rgb(227, 230, 232)",
-  textNormal: "rgb(55, 53, 47)",
-  textMuted: "rgb(77, 74, 66)",
-  textFaint: "rgb(99, 95, 84)",
-  accent: "rgb(11, 110, 153)",
-  accentHover: "rgb(8, 82, 115)",
-  accentLight: "rgba(11, 110, 153, 0.12)",
-  border: "rgb(170, 177, 182)",
-  borderLight: "rgb(227, 230, 232)",
-  success: "rgb(15, 123, 108)",
-  danger: "rgb(224, 62, 62)",
-};
-
-const PROJECT = {
-  title: "RAM Manager",
-  description:
-    "A lightweight Chrome extension that suspends idle tabs to free up memory. Tabs are preserved and can be restored instantly when you return.",
-  tools: "JavaScript, Chrome Extension APIs, HTML, CSS",
-  project_link: "https://github.com/jd-paul/ram-manager",
-  image_url: "/img_ram_manager.png",
-  genre: "Projects",
-};
+import { ArrowLeft, ExternalLink, ShieldCheck } from "lucide-react";
+import { NOTION, PROJECT } from "./theme";
 
 const FEATURES = [
   "Automatic suspension after a custom idle period",
@@ -193,97 +167,38 @@ export default function RamManagerPage() {
           </div>
         </section>
 
-        {/* Privacy Policy */}
+        {/* Privacy — summary with link to the dedicated page */}
         <section className="mb-12">
-          <h2 className="text-2xl font-space-grotesk font-semibold mb-2" style={{ color: NOTION.textNormal }}>
-            Privacy Policy
+          <h2 className="text-2xl font-space-grotesk font-semibold mb-4" style={{ color: NOTION.textNormal }}>
+            Privacy
           </h2>
-          <p className="text-sm mb-6" style={{ color: NOTION.textFaint }}>
-            Last updated: June 14, 2026
-          </p>
 
-          <div className="space-y-8">
-            <div
-              className="p-5 rounded-lg border-l-4"
+          <div
+            className="p-5 rounded-lg border-l-4 mb-6"
+            style={{
+              backgroundColor: NOTION.bgSecondary,
+              borderLeftColor: NOTION.success,
+            }}
+          >
+            <h3 className="text-lg font-semibold mb-2 flex items-center gap-2" style={{ color: NOTION.textNormal }}>
+              <ShieldCheck className="w-5 h-5" style={{ color: NOTION.success }} />
+              No data collection
+            </h3>
+            <p className="leading-relaxed mb-4" style={{ color: NOTION.textMuted }}>
+              RAM Manager does <strong style={{ color: NOTION.textNormal }}>not collect any personal data</strong>.
+              There is no tracking, no analytics, and no remote server — everything is stored locally in your own
+              browser and works fully offline.
+            </p>
+            <Link
+              to="/projects/ram-manager/privacy"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition"
               style={{
-                backgroundColor: NOTION.bgSecondary,
-                borderLeftColor: NOTION.success,
+                backgroundColor: NOTION.accent,
+                color: "rgb(255, 255, 255)",
               }}
             >
-              <h3 className="text-lg font-semibold mb-2" style={{ color: NOTION.textNormal }}>
-                No data collection
-              </h3>
-              <p className="leading-relaxed" style={{ color: NOTION.textMuted }}>
-                RAM Manager does <strong style={{ color: NOTION.textNormal }}>not collect any personal data</strong>. We do not track you, we do not transmit information to external servers, and we do not use analytics or telemetry. The extension works entirely offline and all functionality runs locally on your device.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-2" style={{ color: NOTION.textNormal }}>
-                What is stored locally
-              </h3>
-              <p className="leading-relaxed mb-2" style={{ color: NOTION.textMuted }}>
-                The only data the extension keeps is a small JSON file inside your own browser storage. This includes:
-              </p>
-              <ul className="space-y-2 pl-5 list-disc" style={{ color: NOTION.textMuted }}>
-                <li>
-                  A local suspension history (URL, domain, page title, tab ID, timestamp, and action type) used solely to render your personal dashboard.
-                </li>
-                <li>Your settings, such as the whitelist, protection rules, and theme preferences.</li>
-                <li>Operational data like memory-saved estimates and frozen-tab metadata.</li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-2" style={{ color: NOTION.textNormal }}>
-                Where the data lives
-              </h3>
-              <p className="leading-relaxed" style={{ color: NOTION.textMuted }}>
-                Everything is stored in your browser's local storage ({" "}
-                <code className="px-1 py-0.5 rounded text-sm" style={{ backgroundColor: NOTION.bgSecondary, color: NOTION.textNormal }}>
-                  chrome.storage.local
-                </code>{" "}
-                and{" "}
-                <code className="px-1 py-0.5 rounded text-sm" style={{ backgroundColor: NOTION.bgSecondary, color: NOTION.textNormal }}>
-                  chrome.storage.sync
-                </code>
-                ). This is the same place Chrome keeps your bookmarks and passwords. The data never leaves your device, no server is ever contacted, and the extension continues to work even when you are completely offline.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-2" style={{ color: NOTION.textNormal }}>
-                You control your data
-              </h3>
-              <p className="leading-relaxed" style={{ color: NOTION.textMuted }}>
-                You can clear or delete the local JSON data at any time from the extension dashboard. Because nothing is sent to us, there is nothing for us to delete on your behalf.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-2" style={{ color: NOTION.textNormal }}>
-                Favicon loading
-              </h3>
-              <p className="leading-relaxed" style={{ color: NOTION.textMuted }}>
-                When a tab is suspended, the extension may load the original site's favicon image so the suspended page can display it. This is ordinary image loading only; no remote code is executed and no information about you is sent.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-2" style={{ color: NOTION.textNormal }}>
-                Contact
-              </h3>
-              <p className="leading-relaxed" style={{ color: NOTION.textMuted }}>
-                Questions? Email{" "}
-                <a
-                  href="mailto:johnpaul20030@gmail.com"
-                  className="hover:underline"
-                  style={{ color: NOTION.accent }}
-                >
-                  johnpaul20030@gmail.com
-                </a>
-              </p>
-            </div>
+              Read the full privacy policy
+            </Link>
           </div>
         </section>
 
