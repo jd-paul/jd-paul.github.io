@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { GENRE_LABELS } from "../lib/projectLabels";
-import { optimizeImage, webpObjectName } from "../lib/optimizeImage";
+import { uploadProjectThumbnail } from "../lib/storage";
 import {
   Upload,
   X,
@@ -134,24 +134,9 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
       let image_url = project.image_url;
 
       if (imageFile) {
-        // Convert to WebP (and downscale) in the browser before uploading.
-        const { blob, converted } = await optimizeImage(imageFile);
-        const fileName = converted
-          ? webpObjectName(imageFile.name)
-          : `${Date.now()}.${imageFile.name.split(".").pop()}`;
-        const { error: uploadError } = await supabase.storage
-          .from("project-thumbnails")
-          .upload(fileName, blob, {
-            contentType: converted ? "image/webp" : imageFile.type,
-            cacheControl: "31536000",
-          });
-
-        if (uploadError) throw uploadError;
-
-        const { data: urlData } = supabase.storage
-          .from("project-thumbnails")
-          .getPublicUrl(fileName);
-        image_url = urlData.publicUrl;
+        // Optimized (WebP + downscaled) and uploaded via the shared helper.
+        const uploaded = await uploadProjectThumbnail(imageFile);
+        image_url = uploaded.publicUrl;
       } else if (!imagePreview) {
         image_url = null;
       }

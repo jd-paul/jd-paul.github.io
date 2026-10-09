@@ -4,8 +4,17 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { supabase } from './lib/supabaseClient';
+import { supabase, supabaseUrl } from './lib/supabaseClient';
 import './lib/posthog';
+
+// Warm up the connection to the Storage/PostgREST origin as early as possible
+// (same value the client is configured with — nothing hardcoded in the HTML).
+if (supabaseUrl) {
+  const preconnect = document.createElement('link');
+  preconnect.rel = 'preconnect';
+  preconnect.href = supabaseUrl;
+  document.head.appendChild(preconnect);
+}
 
 const queryClient = new QueryClient();
 

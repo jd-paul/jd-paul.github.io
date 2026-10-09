@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
 import { optimizeImage, webpObjectName, formatKB } from "../lib/optimizeImage";
+import { PROJECT_THUMBNAILS_BUCKET, uploadToBucket } from "../lib/storage";
 
-const BUCKET = "project-thumbnails";
 const MAX_WIDTHS = [800, 1200, 1600, 1920];
 
 const INITIAL_SETTINGS = { quality: 0.82, maxWidth: 1600 };
@@ -100,17 +100,11 @@ export default function ImageOptimizerPage() {
     setItems((prev) => prev.map((i) => (i.id === id ? { ...i, status: "uploading", error: null } : i)));
     try {
       const objectName = webpObjectName(item.name);
-      const { error } = await supabase.storage
-        .from(BUCKET)
-        .upload(objectName, item.blob, {
-          contentType: item.blob.type || "image/webp",
-          cacheControl: "31536000",
-        });
-      if (error) throw error;
-
-      const { data } = supabase.storage.from(BUCKET).getPublicUrl(objectName);
+      const publicUrl = await uploadToBucket(objectName, item.blob, {
+        contentType: item.blob.type || "image/webp",
+      });
       setItems((prev) =>
-        prev.map((i) => (i.id === id ? { ...i, status: "uploaded", publicUrl: data.publicUrl } : i))
+        prev.map((i) => (i.id === id ? { ...i, status: "uploaded", publicUrl } : i))
       );
     } catch (err) {
       setItems((prev) =>
@@ -176,7 +170,7 @@ export default function ImageOptimizerPage() {
             <h1 className="text-2xl font-space-grotesk">Image Optimizer</h1>
             <p className="text-sm text-neutral-400 mt-1">
               Images are converted to WebP and resized in your browser before
-              upload, then served from the <code>{BUCKET}</code> bucket.
+              upload, then served from the <code>{PROJECT_THUMBNAILS_BUCKET}</code> bucket.
             </p>
           </div>
           <Link to="/projects" className="no-underline shrink-0 ml-4">
