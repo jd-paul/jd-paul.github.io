@@ -1,5 +1,5 @@
 import React from 'react';
-import Selfie from '../assets/img/img_profile.png';
+import Selfie from '../assets/img/img_profile.webp';
 import ProgressBar from './ProgressBar';
 
 const Section2 = () => {

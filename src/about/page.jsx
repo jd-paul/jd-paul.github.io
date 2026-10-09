@@ -4,8 +4,8 @@ import Sidebar from "../components/SideBar";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import food from "../assets/img/img_food.png";
-import banner from "../assets/img/img_bohol.jpg";
+import food from "../assets/img/img_food.webp";
+import banner from "../assets/img/img_bohol.webp";
 
 const LandingPage = () => {
   return (

@@ -29,8 +29,8 @@ import {
   SiSupabase,
 } from "react-icons/si";
 
-import Conference from "../assets/img/img_working.png";
-import Graduation from "../assets/img/img_graduation.jpeg";
+import Conference from "../assets/img/img_working.webp";
+import Graduation from "../assets/img/img_graduation.webp";
 
 import AddExperienceForm from "../experience/AddExperienceForm";
 import EditExperienceForm from "../experience/EditExperienceForm";
@@ -330,6 +330,7 @@ const Section1 = () => {
           src={Conference}
           alt="Paul presenting"
           className="w-full h-full object-cover object-bottom"
+          fetchpriority="high"
         />
       </div>
 

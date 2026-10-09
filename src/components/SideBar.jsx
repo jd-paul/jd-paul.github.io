@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Github, Linkedin, ShieldUser, LogOut } from "lucide-react";
-import Selfie from "../assets/img/img_profile.png";
+import Selfie from "../assets/img/img_profile.webp";
 import CssGridBackground from "./CssGridBackground";
 import { supabase } from "../lib/supabaseClient";
 
