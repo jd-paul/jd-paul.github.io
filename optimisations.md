@@ -6,6 +6,26 @@
 
 ---
 
+## Status (2026-10-09)
+
+| #   | Issue                                                      | Status      |
+| --- | ---------------------------------------------------------- | ----------- |
+| 1   | No data caching — same queries re-run on every route visit | **Done** — TanStack Query + `useProjects`/`useExperience` hooks |
+| 2   | Large unoptimised image assets (~20 MB total)              | **Done** — 5 shipped images converted to WebP; media payload 4.7 MB → 644 KB |
+| 3   | No `loading="lazy"` on any `<img>` tag                     | **Done** — all non-hero images lazy; hero eager with `fetchpriority="high"` |
+| 4   | No route-based code splitting                              | **Done** — `React.lazy()` for all routes in `src/App.js` |
+| 5   | FontAwesome heavy dependency                               | **Done** — replaced by `react-icons`; packages removed |
+| 6   | Missing `.select()` column filtering                       | **Done** — explicit column selection in `useProjects` |
+| 7–10 | React micro-optimisations                                 | **Mostly done** — module-scope constants in `Section1`; memo/callback items remain low priority |
+
+Additional changes since the plan:
+- Google Fonts moved from blocking CSS `@import` to `preconnect` + stylesheet `<link>` in `public/index.html`.
+- `posthog-js` removed from the main bundle — now dynamically imported only when `REACT_APP_PUBLIC_POSTHOG_KEY` is set (`src/lib/posthog.js`).
+- Source map generation disabled for production builds (`GENERATE_SOURCEMAP=false`).
+- `src/assets/img/` still holds ~26 MB of unreferenced originals (not shipped); safe to prune.
+
+---
+
 ## Summary Table
 
 | #   | Issue                                                      | Priority   | Category      | Effort   |
