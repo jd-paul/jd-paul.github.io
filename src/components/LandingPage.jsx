@@ -8,10 +8,10 @@ const LandingPage = () => {
     <div className="min-h-screen text-white">
       <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr]">
         <Sidebar />
-        <div className="space-y-8 bg-[#0a0a0a]">
+        <main id="main" className="space-y-8 bg-[#0a0a0a]">
           <Section1 />
           <Section5 />
-        </div>
+        </main>
       </div>
     </div>
   );

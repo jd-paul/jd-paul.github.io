@@ -5,7 +5,7 @@ import CssGridBackground from "../components/CssGridBackground";
 
 const NotFound = () => {
   return (
-    <div className="relative min-h-screen w-full flex flex-col items-center justify-center font-work-sans bg-black text-white">
+    <main className="relative min-h-screen w-full flex flex-col items-center justify-center font-work-sans bg-black text-white">
       {/* Background Pattern */}
       <CssGridBackground />
 
@@ -16,34 +16,31 @@ const NotFound = () => {
         </p>
 
         <div className="flex gap-4">
-          {/* Using your exact button styling from Section1 */}
-          <Link to="/" style={{ textDecoration: "none" }}>
-            <button
-              className="flex items-center gap-2 border px-4 py-2.5 border-white text-white rounded-lg text-sm hover:bg-white hover:text-black transition"
-              aria-label="Back to home"
-            >
-              Back Home
-              <Home className="w-4 h-4" />
-            </button>
+          <Link
+            to="/"
+            aria-label="Back to home"
+            className="flex items-center gap-2 border px-4 py-2.5 border-white text-white rounded-lg text-sm hover:bg-white hover:text-black transition no-underline"
+          >
+            Back Home
+            <Home className="w-4 h-4" aria-hidden="true" />
           </Link>
 
-          <Link to="/projects" style={{ textDecoration: "none" }}>
-            <button
-              className="flex items-center gap-2 border px-4 py-2.5 border-white text-white rounded-lg text-sm hover:bg-white hover:text-black transition"
-              aria-label="View Projects"
-            >
-              Work &amp; Contributions
-              <ArrowRight className="w-4 h-4" />
-            </button>
+          <Link
+            to="/projects"
+            aria-label="View projects"
+            className="flex items-center gap-2 border px-4 py-2.5 border-white text-white rounded-lg text-sm hover:bg-white hover:text-black transition no-underline"
+          >
+            Work &amp; Contributions
+            <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </Link>
         </div>
       </div>
 
       {/* Footer to match your Sidebar/Section1 bottom spacing */}
-      <footer className="absolute bottom-8 text-neutral-500 text-xs">
-        © 2025 John Paul San Diego
+      <footer className="absolute bottom-8 text-neutral-400 text-xs">
+        © {new Date().getFullYear()} John Paul San Diego
       </footer>
-    </div>
+    </main>
   );
 };
 

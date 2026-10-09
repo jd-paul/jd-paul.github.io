@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { useState, useEffect } from "react";
+import Dialog from "../components/Dialog";
 import Sidebar from "../components/SideBar";
 import AddProjectForm from "./AddProjectForm";
 import EditProjectForm from "./EditProjectForm";
@@ -18,7 +19,12 @@ const LandingPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
 
-  const { data: projects = [], isLoading: loading, refetch } = useProjects();
+  const {
+    data: projects = [],
+    isLoading: loading,
+    isError,
+    refetch,
+  } = useProjects();
 
   const groupedProjects = useMemo(() => {
     const groups = new Map();
@@ -41,7 +47,8 @@ const LandingPage = () => {
   useEffect(() => {
     supabase.auth
       .getSession()
-      .then(({ data: { session } }) => setSession(session));
+      .then(({ data: { session } }) => setSession(session))
+      .catch(() => {});
 
     const {
       data: { subscription },
@@ -56,18 +63,19 @@ const LandingPage = () => {
     <div className="min-h-screen text-white bg-black">
       <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr]">
         <Sidebar session={session} />
-        <div className="space-y-8 bg-[#0a0a0a]">
+        <main id="main" className="space-y-8 bg-[#0a0a0a]">
           <section className="p-6 font-work-sans">
             <div className="flex justify-between items-center mb-3 mt-6">
-              <h2 className="text-2xl font-space-grotesk">Work & Contributions</h2>
+              <h1 className="text-2xl font-space-grotesk">Work & Contributions</h1>
 
               <div className="flex gap-3">
                 {session && (
                   <>
-                    <Link to="/admin/image-optimizer" className="no-underline">
-                      <button className="bg-neutral-800 px-4 py-2 rounded-lg text-sm hover:bg-neutral-700 transition">
-                        Optimize Images
-                      </button>
+                    <Link
+                      to="/admin/image-optimizer"
+                      className="no-underline bg-neutral-800 px-4 py-2 rounded-lg text-sm hover:bg-neutral-700 transition"
+                    >
+                      Optimize Images
                     </Link>
                     <button
                       onClick={handleToggleForm}
@@ -78,44 +86,43 @@ const LandingPage = () => {
                   </>
                 )}
 
-                <Link to="/" className="no-underline">
-                  <button className="flex items-center gap-1 border px-3 py-2.5 border-white text-white rounded-lg text-sm hover:bg-white hover:text-black transition">
-                    Back Home <ArrowLeft className="w-4 h-4" />
-                  </button>
+                <Link
+                  to="/"
+                  className="no-underline flex items-center gap-1 border px-3 py-2.5 border-white text-white rounded-lg text-sm hover:bg-white hover:text-black transition"
+                >
+                  Back Home <ArrowLeft className="w-4 h-4" aria-hidden="true" />
                 </Link>
               </div>
             </div>
             {session && showForm && (
               <div className="mb-6">
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                  <div
-                    className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-                    onClick={handleCloseForm}
+                <Dialog
+                  open={showForm}
+                  onClose={handleCloseForm}
+                  ariaLabel="Add project"
+                  className="relative z-10 w-full max-w-2xl max-h-screen overflow-y-auto mx-auto my-auto"
+                >
+                  <AddProjectForm
+                    onSuccess={refetch}
+                    onClose={handleCloseForm}
                   />
-                  <div className="relative z-10 w-full max-w-2xl max-h-screen overflow-y-auto mx-auto my-auto">
-                    <AddProjectForm
-                      onSuccess={refetch}
-                      onClose={handleCloseForm}
-                    />
-                  </div>
-                </div>
+                </Dialog>
               </div>
             )}
 
             {session && editingProject && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                <div
-                  className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-                  onClick={handleCloseEdit}
+              <Dialog
+                open={!!editingProject}
+                onClose={handleCloseEdit}
+                ariaLabel="Edit project"
+                className="relative z-10 w-full max-w-2xl max-h-screen overflow-y-auto mx-auto my-auto"
+              >
+                <EditProjectForm
+                  project={editingProject}
+                  onSuccess={refetch}
+                  onClose={handleCloseEdit}
                 />
-                <div className="relative z-10 w-full max-w-2xl max-h-screen overflow-y-auto mx-auto my-auto">
-                  <EditProjectForm
-                    project={editingProject}
-                    onSuccess={refetch}
-                    onClose={handleCloseEdit}
-                  />
-                </div>
-              </div>
+              </Dialog>
             )}
 
             {/* Loading State */}
@@ -125,9 +132,22 @@ const LandingPage = () => {
               </div>
             )}
 
+            {/* Error State */}
+            {isError && (
+              <div className="text-gray-400 text-sm mt-10 text-center">
+                Couldn't load projects.{" "}
+                <button
+                  onClick={() => refetch()}
+                  className="underline hover:text-white transition"
+                >
+                  Retry
+                </button>
+              </div>
+            )}
+
             {/* Empty State */}
-            {!loading && projects.length === 0 && (
-              <div className="text-gray-500 text-sm mt-10 text-center">
+            {!loading && !isError && projects.length === 0 && (
+              <div className="text-gray-400 text-sm mt-10 text-center">
                 No projects yet.{" "}
                 {session
                   ? "Add one using the button above."
@@ -187,7 +207,7 @@ const LandingPage = () => {
                                   className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-black text-black rounded-lg text-sm hover:bg-black hover:text-white transition"
                                 >
                                   Link to project
-                                  <ExternalLink className="w-4 h-4" />
+                                  <ExternalLink className="w-4 h-4" aria-hidden="true" />
                                 </a>
                               )}
                               {session && (
@@ -196,7 +216,7 @@ const LandingPage = () => {
                                   className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-blue-600 text-blue-600 rounded-lg text-sm hover:bg-blue-600 hover:text-white transition"
                                 >
                                   Edit
-                                  <Pencil className="w-3.5 h-3.5" />
+                                  <Pencil className="w-3.5 h-3.5" aria-hidden="true" />
                                 </button>
                               )}
                             </div>
@@ -209,7 +229,7 @@ const LandingPage = () => {
               </div>
             )}
           </section>
-        </div>
+        </main>
       </div>
     </div>
   );

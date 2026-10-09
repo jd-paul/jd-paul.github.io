@@ -43,7 +43,6 @@ const Sidebar = () => {
             src={Selfie}
             alt="John Paul San Diego"
             className="rounded-full w-16 h-16 object-cover"
-            loading="lazy"
           />
           <div>
             <h1 className="text-2xl font-space-grotesk">John Paul San Diego</h1>
@@ -66,26 +65,28 @@ const Sidebar = () => {
         {/* Social Links */}
         <div className="space-y-4 mt-auto">
           {/* Social Links & Admin Login Side-to-Side */}
-          <div className="flex items-center gap-6">
-            <a
-              href="https://linkedin.com/in/paul-san-diego/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-100 hover:text-white transition"
-              aria-label="LinkedIn"
-            >
-              <Linkedin className="w-5 h-5" />
-            </a>
-            <a
-              href="https://github.com/jd-paul"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-100 hover:text-white transition"
-              aria-label="GitHub"
-            >
-              <Github className="w-5 h-5" />
-            </a>
-          </div>
+          <nav aria-label="Social profiles">
+            <div className="flex items-center gap-6">
+              <a
+                href="https://linkedin.com/in/paul-san-diego/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-100 hover:text-white transition"
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="w-5 h-5" />
+              </a>
+              <a
+                href="https://github.com/jd-paul"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-100 hover:text-white transition"
+                aria-label="GitHub"
+              >
+                <Github className="w-5 h-5" />
+              </a>
+            </div>
+          </nav>
 
           {/* Need this at the bottom-most whenever it's md and above. */}
           <div className="space-y-4">
@@ -95,6 +96,7 @@ const Sidebar = () => {
             </div>
 
             <button
+              type="button"
               onClick={handleAuth}
               className="text-gray-400 text-sm hover:text-white transition flex items-center gap-3"
             >

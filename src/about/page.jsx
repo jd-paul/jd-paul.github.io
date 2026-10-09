@@ -12,18 +12,17 @@ const LandingPage = () => {
     <div className="min-h-screen text-white">
       <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr]">
         <Sidebar />
-        <div className="space-y-8 bg-[#0a0a0a]">
+        <main id="main" className="space-y-8 bg-[#0a0a0a]">
           <section className="p-6 font-work-sans" id="about">
             <div className="flex justify-between items-center mb-3 mt-6">
-              <h2 className="text-2xl font-space-grotesk">About Me</h2>
-              <Link to="/" style={{ textDecoration: "none" }}>
-                <button
-                  className="flex items-center gap-1 border px-3 py-2.5 border-white text-white rounded-lg text-sm hover:bg-white hover:text-black transition"
-                  aria-label="Back to home"
-                >
-                  Back Home
-                  <ArrowLeft className="w-4 h-4" />
-                </button>
+              <h1 className="text-2xl font-space-grotesk">About Me</h1>
+              <Link
+                to="/"
+                aria-label="Back to home"
+                className="flex items-center gap-1 border px-3 py-2.5 border-white text-white rounded-lg text-sm hover:bg-white hover:text-black transition no-underline"
+              >
+                Back Home
+                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
               </Link>
             </div>
 
@@ -34,9 +33,11 @@ const LandingPage = () => {
 
               <img
                 src={banner}
-                alt="Banner"
+                alt="Coastline and hills of Bohol, Philippines"
                 className="w-full h-auto object-cover rounded-lg"
-                loading="lazy"
+                width="1200"
+                height="899"
+                fetchpriority="high"
               />
             </div>
 
@@ -80,12 +81,14 @@ const LandingPage = () => {
                   src={food}
                   alt="Sinigang"
                   className="w-full max-h-[400px] object-cover rounded-lg"
+                  width="800"
+                  height="1059"
                   loading="lazy"
                 />
               </div>
             </div>
           </section>
-        </div>
+        </main>
       </div>
     </div>
   );

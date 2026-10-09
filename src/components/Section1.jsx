@@ -34,6 +34,7 @@ import Graduation from "../assets/img/img_graduation.webp";
 
 import AddExperienceForm from "../experience/AddExperienceForm";
 import EditExperienceForm from "../experience/EditExperienceForm";
+import Dialog from "./Dialog";
 import { useProjects } from "../hooks/useProjects";
 import { useExperience } from "../hooks/useExperience";
 import { supabase } from "../lib/supabaseClient";
@@ -88,7 +89,8 @@ const Section1 = () => {
   useEffect(() => {
     supabase.auth
       .getSession()
-      .then(({ data: { session } }) => setSession(session));
+      .then(({ data: { session } }) => setSession(session))
+      .catch(() => {});
 
     const {
       data: { subscription },
@@ -132,18 +134,24 @@ const Section1 = () => {
   };
 
   return (
-    <section className="p-6 font-work-sans" id="about">
+    <section
+      className="p-6 font-work-sans"
+      id="about"
+      aria-labelledby="about-heading"
+    >
       {/* Projects */}
       <div className="flex justify-between items-center mb-3 mt-6">
-        <h2 className="text-2xl font-space-grotesk">Work &amp; Contributions</h2>
-        <Link to="/projects" style={LINK_STYLE}>
-          <button
-            className="flex items-center gap-1 border px-3 py-2.5 border-white text-white rounded-lg text-sm hover:bg-white hover:text-black transition"
-            aria-label="Back to home"
-          >
-            Work &amp; Contributions
-            <ArrowRight className="w-4 h-4" />
-          </button>
+        <h2 id="about-heading" className="text-2xl font-space-grotesk">
+          Work &amp; Contributions
+        </h2>
+        <Link
+          to="/projects"
+          style={LINK_STYLE}
+          className="flex items-center gap-1 border px-3 py-2.5 border-white text-white rounded-lg text-sm hover:bg-white hover:text-black transition"
+          aria-label="View all projects"
+        >
+          Work &amp; Contributions
+          <ArrowRight className="w-4 h-4" aria-hidden="true" />
         </Link>
       </div>
 
@@ -154,7 +162,7 @@ const Section1 = () => {
             href={project.project_link}
             target="_blank"
             rel="noopener noreferrer"
-            className="relative group block min-h-[180px] max-h-[300px] overflow-hidden rounded-lg"
+            className="relative group block aspect-[16/9] overflow-hidden rounded-lg"
           >
             <img
               src={project.image_url}
@@ -181,6 +189,7 @@ const Section1 = () => {
 
           {isAdmin && (
             <button
+              type="button"
               onClick={handleToggleExpForm}
               className="bg-blue-600 px-4 py-2 rounded-lg text-sm hover:bg-blue-500 transition"
             >
@@ -194,7 +203,7 @@ const Section1 = () => {
         )}
 
         {!loadingExperience && experiences.length === 0 && (
-          <p className="text-gray-500 text-sm">
+          <p className="text-neutral-400 text-sm">
             Experience coming soon.{" "}
             {isAdmin && "Add one using the button above."}
           </p>
@@ -218,21 +227,24 @@ const Section1 = () => {
                 {isAdmin && (
                   <div className="flex items-center gap-1.5 shrink-0">
                     <button
+                      type="button"
                       onClick={() => setEditingExperience(exp)}
                       className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-blue-600 text-blue-400 rounded-lg text-xs hover:bg-blue-600 hover:text-white transition"
                     >
                       Edit
-                      <Pencil className="w-3.5 h-3.5" />
+                      <Pencil className="w-3.5 h-3.5" aria-hidden="true" />
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleMoveExperience(index, -1)}
                       disabled={index === 0 || movingId !== null}
                       aria-label="Move up"
                       className="inline-flex items-center px-2 py-1.5 border border-neutral-600 text-neutral-300 rounded-lg hover:bg-neutral-800 transition disabled:opacity-30 disabled:cursor-not-allowed"
                     >
-                      <ArrowUp className="w-3.5 h-3.5" />
+                      <ArrowUp className="w-3.5 h-3.5" aria-hidden="true" />
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleMoveExperience(index, 1)}
                       disabled={
                         index === experiences.length - 1 || movingId !== null
@@ -240,7 +252,7 @@ const Section1 = () => {
                       aria-label="Move down"
                       className="inline-flex items-center px-2 py-1.5 border border-neutral-600 text-neutral-300 rounded-lg hover:bg-neutral-800 transition disabled:opacity-30 disabled:cursor-not-allowed"
                     >
-                      <ArrowDown className="w-3.5 h-3.5" />
+                      <ArrowDown className="w-3.5 h-3.5" aria-hidden="true" />
                     </button>
                   </div>
                 )}
@@ -250,35 +262,33 @@ const Section1 = () => {
         )}
       </div>
 
-      {isAdmin && showExpForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-            onClick={handleCloseExpForm}
+      {isAdmin && (
+        <Dialog
+          open={showExpForm}
+          onClose={handleCloseExpForm}
+          ariaLabel="Add experience"
+          className="relative z-10 w-full max-w-2xl max-h-screen overflow-y-auto mx-auto my-auto"
+        >
+          <AddExperienceForm
+            onSuccess={refetchExperience}
+            onClose={handleCloseExpForm}
           />
-          <div className="relative z-10 w-full max-w-2xl max-h-screen overflow-y-auto mx-auto my-auto">
-            <AddExperienceForm
-              onSuccess={refetchExperience}
-              onClose={handleCloseExpForm}
-            />
-          </div>
-        </div>
+        </Dialog>
       )}
 
-      {isAdmin && editingExperience && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-            onClick={handleCloseEditExp}
+      {isAdmin && (
+        <Dialog
+          open={Boolean(editingExperience)}
+          onClose={handleCloseEditExp}
+          ariaLabel="Edit experience"
+          className="relative z-10 w-full max-w-2xl max-h-screen overflow-y-auto mx-auto my-auto"
+        >
+          <EditExperienceForm
+            experience={editingExperience}
+            onSuccess={refetchExperience}
+            onClose={handleCloseEditExp}
           />
-          <div className="relative z-10 w-full max-w-2xl max-h-screen overflow-y-auto mx-auto my-auto">
-            <EditExperienceForm
-              experience={editingExperience}
-              onSuccess={refetchExperience}
-              onClose={handleCloseEditExp}
-            />
-          </div>
-        </div>
+        </Dialog>
       )}
 
       {/* Stack */}
@@ -302,7 +312,7 @@ const Section1 = () => {
         </div>
 
         <div className="border-t border-white/25 mt-6 pt-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-white/80 mb-3 font-space-grotesk">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-white mb-3 font-space-grotesk">
             Certifications
           </h3>
           <div className="flex gap-3 flex-wrap">
@@ -318,10 +328,7 @@ const Section1 = () => {
         </div>
       </div>
 
-      {/* Me */}
-      <div className="flex justify-between items-center mt-6"></div>
-
-      <div className="relative w-full aspect-[3/2] max-h-[450px] overflow-hidden rounded-lg">
+      <div className="relative w-full aspect-[3/2] max-h-[450px] overflow-hidden rounded-lg mt-6">
         {/* Overlay */}
         <div className="absolute inset-0 bg-black opacity-40 z-10" />
 
@@ -347,7 +354,7 @@ const Section1 = () => {
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white transition"
             >
-              <Linkedin className="w-4 h-4" />
+              <Linkedin className="w-4 h-4" aria-hidden="true" />
               LinkedIn
             </a>
             <a
@@ -356,14 +363,14 @@ const Section1 = () => {
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white transition"
             >
-              <Github className="w-4 h-4" />
+              <Github className="w-4 h-4" aria-hidden="true" />
               GitHub
             </a>
             <a
               href="mailto:johnpaul20030@gmail.com"
               className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white transition"
             >
-              <Mail className="w-4 h-4" />
+              <Mail className="w-4 h-4" aria-hidden="true" />
               johnpaul20030@gmail.com
             </a>
           </div>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ExternalLink, ShieldCheck } from "lucide-react";
 import { NOTION, PROJECT } from "./theme";
@@ -31,12 +31,9 @@ const FAQ = [
 ];
 
 export default function RamManagerPage() {
-  useEffect(() => {
-    document.title = `${PROJECT.title} | John Paul San Diego`;
-  }, []);
-
   return (
     <main
+      id="main"
       className="min-h-screen font-work-sans"
       style={{ backgroundColor: NOTION.bgPrimary, color: NOTION.textNormal }}
     >
@@ -49,7 +46,7 @@ export default function RamManagerPage() {
               className="inline-flex items-center gap-1 hover:underline transition"
               style={{ color: NOTION.accent }}
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4" aria-hidden="true" />
               Projects
             </Link>
             <span>/</span>
@@ -78,6 +75,9 @@ export default function RamManagerPage() {
             src={PROJECT.image_url}
             alt={`${PROJECT.title} hero banner`}
             className="w-full h-auto block"
+            width="1280"
+            height="800"
+            fetchPriority="high"
           />
         </figure>
 
@@ -104,7 +104,7 @@ export default function RamManagerPage() {
                 e.currentTarget.style.backgroundColor = NOTION.accent;
               }}
             >
-              View on GitHub <ExternalLink className="w-4 h-4" />
+              View on GitHub <ExternalLink className="w-4 h-4" aria-hidden="true" />
             </a>
           )}
         </section>
@@ -181,7 +181,7 @@ export default function RamManagerPage() {
             }}
           >
             <h3 className="text-lg font-semibold mb-2 flex items-center gap-2" style={{ color: NOTION.textNormal }}>
-              <ShieldCheck className="w-5 h-5" style={{ color: NOTION.success }} />
+              <ShieldCheck className="w-5 h-5" style={{ color: NOTION.success }} aria-hidden="true" />
               No data collection
             </h3>
             <p className="leading-relaxed mb-4" style={{ color: NOTION.textMuted }}>
@@ -209,7 +209,7 @@ export default function RamManagerPage() {
             className="inline-flex items-center gap-2 font-medium transition"
             style={{ color: NOTION.accent }}
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4" aria-hidden="true" />
             Back to all projects
           </Link>
         </div>

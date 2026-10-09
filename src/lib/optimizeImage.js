@@ -5,10 +5,10 @@
 //
 // Note: animated GIFs are decoded to their first frame.
 
-const DEFAULTS = { maxWidth: 1600, quality: 0.82 };
+const DEFAULTS = { maxWidth: 1600, maxHeight: 1600, quality: 0.82 };
 
 export async function optimizeImage(file, options = {}) {
-  const { maxWidth, quality } = { ...DEFAULTS, ...options };
+  const { maxWidth, maxHeight, quality } = { ...DEFAULTS, ...options };
 
   if (file.type === "image/svg+xml" || !file.type.startsWith("image/")) {
     return { blob: file, originalSize: file.size, optimizedSize: file.size, converted: false };
@@ -16,7 +16,8 @@ export async function optimizeImage(file, options = {}) {
 
   const bitmap = await createImageBitmap(file);
   try {
-    const scale = Math.min(1, maxWidth / bitmap.width);
+    // Cap both dimensions so extreme aspect ratios (e.g. 300x20000) still downscale.
+    const scale = Math.min(1, maxWidth / bitmap.width, maxHeight / bitmap.height);
     const width = Math.max(1, Math.round(bitmap.width * scale));
     const height = Math.max(1, Math.round(bitmap.height * scale));
 

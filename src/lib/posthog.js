@@ -7,17 +7,22 @@ let instance = null;
 const queue = [];
 
 if (key) {
-  import("posthog-js").then(({ default: posthog }) => {
-    posthog.init(key, {
-      api_host: host,
-      person_profiles: "identified_only",
-    });
-    instance = posthog;
-    while (queue.length) {
-      const [event, props] = queue.shift();
-      instance.capture(event, props);
-    }
-  });
+  import("posthog-js")
+    .then(({ default: posthog }) => {
+      posthog.init(key, {
+        api_host: host,
+        person_profiles: "identified_only",
+        // PageViewTracker fires $pageview on every route change (App.js);
+        // posthog's own History-instrumented pageview would double-count.
+        capture_pageview: false,
+      });
+      instance = posthog;
+      while (queue.length) {
+        const [event, props] = queue.shift();
+        instance.capture(event, props);
+      }
+    })
+    .catch(() => {});
 }
 
 export default {

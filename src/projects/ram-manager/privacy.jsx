@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowLeft,
@@ -100,12 +100,9 @@ function SectionTitle({ children }) {
 }
 
 export default function RamManagerPrivacyPage() {
-  useEffect(() => {
-    document.title = `Privacy Policy — ${PROJECT.title} | John Paul San Diego`;
-  }, []);
-
   return (
     <main
+      id="main"
       className="min-h-screen font-work-sans"
       style={{ backgroundColor: NOTION.bgPrimary, color: NOTION.textNormal }}
     >

@@ -19,8 +19,8 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const isValidUrl = (url) => {
   if (!url) return true; // optional field
   try {
-    new URL(url);
-    return true;
+    const { protocol } = new URL(url);
+    return protocol === "http:" || protocol === "https:";
   } catch {
     return false;
   }
@@ -100,6 +100,10 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!form.title.trim() || !form.description.trim() || !form.tools.trim()) {
+      return;
+    }
+
     if (!isValidUrl(form.project_link)) {
       setStatus("error");
       setErrorMsg(
@@ -163,13 +167,13 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
       <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-800">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-            <ArrowUpCircle className="w-4 h-4 text-white" />
+            <ArrowUpCircle aria-hidden="true" className="w-4 h-4 text-white" />
           </div>
           <div>
             <h2 className="text-white font-space-grotesk text-lg font-semibold leading-none">
               Add Project
             </h2>
-            <p className="text-neutral-500 text-xs mt-0.5">
+            <p className="text-neutral-400 text-xs mt-0.5">
               Publish to your portfolio
             </p>
           </div>
@@ -181,7 +185,7 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
             aria-label="Close"
             className="text-neutral-500 hover:text-white transition p-1 rounded-lg hover:bg-neutral-800"
           >
-            <X className="w-5 h-5" />
+            <X aria-hidden="true" className="w-5 h-5" />
           </button>
         )}
       </div>
@@ -189,9 +193,9 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
       <form onSubmit={handleSubmit} className="p-6 space-y-5">
         {/* Image Drop Zone */}
         <div>
-          <label className="block text-xs font-medium text-neutral-400 uppercase tracking-wider mb-2">
+          <span className="block text-xs font-medium text-neutral-400 uppercase tracking-wider mb-2">
             Cover Image
-          </label>
+          </span>
           {imagePreview ? (
             <div className="relative rounded-xl overflow-hidden border border-blue-600/40 shadow-sm shadow-blue-600/10">
               <img
@@ -206,7 +210,7 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
                 aria-label="Remove image"
                 className="absolute top-2 right-2 bg-black/70 hover:bg-black text-white rounded-full p-1.5 transition"
               >
-                <X className="w-3.5 h-3.5" />
+                <X aria-hidden="true" className="w-3.5 h-3.5" />
               </button>
               <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/60 to-transparent" />
             </div>
@@ -217,9 +221,12 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
               onClick={() => fileInputRef.current?.click()}
               onDrop={handleImageDrop}
               onDragOver={(e) => e.preventDefault()}
-              onKeyDown={(e) =>
-                e.key === "Enter" && fileInputRef.current?.click()
-              }
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  fileInputRef.current?.click();
+                }
+              }}
               className="border-2 border-dashed border-neutral-700 hover:border-blue-600 rounded-xl h-36 flex flex-col items-center justify-center gap-2 cursor-pointer transition group"
             >
               <Upload className="w-6 h-6 text-neutral-600 group-hover:text-blue-500 transition" />
@@ -241,8 +248,14 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
         </div>
 
         {/* Name */}
-        <Field icon={<Tag className="w-4 h-4" />} label="Project Name" required>
+        <Field
+          icon={<Tag className="w-4 h-4" />}
+          label="Project Name"
+          required
+          htmlFor="add-project-title"
+        >
           <input
+            id="add-project-title"
             name="title"
             value={form.title}
             onChange={handleChange}
@@ -258,8 +271,10 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
           icon={<FileText className="w-4 h-4" />}
           label="Description"
           required
+          htmlFor="add-project-description"
         >
           <textarea
+            id="add-project-description"
             name="description"
             value={form.description}
             onChange={handleChange}
@@ -276,8 +291,10 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
           icon={<Wrench className="w-4 h-4" />}
           label="Tools Used"
           required
+          htmlFor="add-project-tools"
         >
           <input
+            id="add-project-tools"
             name="tools"
             value={form.tools}
             onChange={handleChange}
@@ -293,8 +310,10 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
           icon={<span className="text-xs font-bold">G</span>}
           label="Genre"
           required
+          htmlFor="add-project-genre"
         >
           <select
+            id="add-project-genre"
             name="genre"
             value={form.genre}
             onChange={handleChange}
@@ -313,8 +332,13 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
 
         {/* Two column: Link + Display Order */}
         <div className="grid grid-cols-2 gap-4">
-          <Field icon={<Link2 className="w-4 h-4" />} label="Project Link">
+          <Field
+            icon={<Link2 className="w-4 h-4" />}
+            label="Project Link"
+            htmlFor="add-project-link"
+          >
             <input
+              id="add-project-link"
               name="project_link"
               value={form.project_link}
               onChange={handleChange}
@@ -326,8 +350,10 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
           <Field
             icon={<span className="text-xs font-bold">#</span>}
             label="Display Order"
+            htmlFor="add-project-display-order"
           >
             <input
+              id="add-project-display-order"
               name="display_order"
               type="number"
               value={form.display_order}
@@ -342,7 +368,10 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
 
         {/* Error */}
         {status === "error" && (
-          <div className="flex items-center gap-2 text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3 text-sm">
+          <div
+            role="status"
+            className="flex items-center gap-2 text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3 text-sm"
+          >
             <AlertCircle className="w-4 h-4 shrink-0" />
             {errorMsg}
           </div>
@@ -362,10 +391,10 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
             }`}
         >
           {status === "success" ? (
-            <>
+            <span role="status" className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4" />
               Project Added!
-            </>
+            </span>
           ) : isLoading ? (
             <>
               <Loader />
@@ -379,31 +408,16 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
           )}
         </button>
       </form>
-
-      <style>{`
-        .input-field {
-          width: 100%;
-          background: #1a1a1a;
-          border: 1px solid #2a2a2a;
-          border-radius: 0.625rem;
-          padding: 0.625rem 0.875rem;
-          color: #e5e5e5;
-          font-size: 0.875rem;
-          outline: none;
-          transition: border-color 0.15s;
-          font-family: inherit;
-        }
-        .input-field::placeholder { color: #555; }
-        .input-field:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
-        .input-field:disabled { opacity: 0.5; cursor: not-allowed; }
-      `}</style>
     </div>
   );
 };
 
-const Field = ({ icon, label, required, children }) => (
+const Field = ({ icon, label, required, htmlFor, children }) => (
   <div>
-    <label className="flex items-center gap-1.5 text-xs font-medium text-neutral-400 uppercase tracking-wider mb-2">
+    <label
+      htmlFor={htmlFor}
+      className="flex items-center gap-1.5 text-xs font-medium text-neutral-400 uppercase tracking-wider mb-2"
+    >
       <span className="text-neutral-600">{icon}</span>
       {label}
       {required && <span className="text-blue-500 ml-0.5">*</span>}

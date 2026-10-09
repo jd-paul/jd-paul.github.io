@@ -39,6 +39,15 @@ const AddExperienceForm = ({ onSuccess, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (
+      !form.role.trim() ||
+      !form.company.trim() ||
+      !form.dates.trim() ||
+      !form.highlights.trim()
+    ) {
+      return;
+    }
+
     const displayOrder = form.display_order
       ? parseInt(form.display_order, 10)
       : null;
@@ -84,13 +93,13 @@ const AddExperienceForm = ({ onSuccess, onClose }) => {
       <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-800">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-            <ArrowUpCircle className="w-4 h-4 text-white" />
+            <ArrowUpCircle aria-hidden="true" className="w-4 h-4 text-white" />
           </div>
           <div>
             <h2 className="text-white font-space-grotesk text-lg font-semibold leading-none">
               Add Experience
             </h2>
-            <p className="text-neutral-500 text-xs mt-0.5">
+            <p className="text-neutral-400 text-xs mt-0.5">
               Publish to your portfolio
             </p>
           </div>
@@ -102,15 +111,21 @@ const AddExperienceForm = ({ onSuccess, onClose }) => {
             aria-label="Close"
             className="text-neutral-500 hover:text-white transition p-1 rounded-lg hover:bg-neutral-800"
           >
-            <X className="w-5 h-5" />
+            <X aria-hidden="true" className="w-5 h-5" />
           </button>
         )}
       </div>
 
       <form onSubmit={handleSubmit} className="p-6 space-y-5">
         {/* Role */}
-        <Field icon={<Briefcase className="w-4 h-4" />} label="Role" required>
+        <Field
+          icon={<Briefcase className="w-4 h-4" />}
+          label="Role"
+          required
+          htmlFor="add-exp-role"
+        >
           <input
+            id="add-exp-role"
             name="role"
             value={form.role}
             onChange={handleChange}
@@ -122,8 +137,14 @@ const AddExperienceForm = ({ onSuccess, onClose }) => {
         </Field>
 
         {/* Company */}
-        <Field icon={<Building2 className="w-4 h-4" />} label="Company" required>
+        <Field
+          icon={<Building2 className="w-4 h-4" />}
+          label="Company"
+          required
+          htmlFor="add-exp-company"
+        >
           <input
+            id="add-exp-company"
             name="company"
             value={form.company}
             onChange={handleChange}
@@ -135,8 +156,14 @@ const AddExperienceForm = ({ onSuccess, onClose }) => {
         </Field>
 
         {/* Dates */}
-        <Field icon={<CalendarDays className="w-4 h-4" />} label="Dates" required>
+        <Field
+          icon={<CalendarDays className="w-4 h-4" />}
+          label="Dates"
+          required
+          htmlFor="add-exp-dates"
+        >
           <input
+            id="add-exp-dates"
             name="dates"
             value={form.dates}
             onChange={handleChange}
@@ -148,8 +175,14 @@ const AddExperienceForm = ({ onSuccess, onClose }) => {
         </Field>
 
         {/* Highlights */}
-        <Field icon={<FileText className="w-4 h-4" />} label="Highlights" required>
+        <Field
+          icon={<FileText className="w-4 h-4" />}
+          label="Highlights"
+          required
+          htmlFor="add-exp-highlights"
+        >
           <textarea
+            id="add-exp-highlights"
             name="highlights"
             value={form.highlights}
             onChange={handleChange}
@@ -162,8 +195,13 @@ const AddExperienceForm = ({ onSuccess, onClose }) => {
         </Field>
 
         {/* Display Order */}
-        <Field icon={<span className="text-xs font-bold">#</span>} label="Display Order">
+        <Field
+          icon={<span className="text-xs font-bold">#</span>}
+          label="Display Order"
+          htmlFor="add-exp-display-order"
+        >
           <input
+            id="add-exp-display-order"
             name="display_order"
             type="number"
             value={form.display_order}
@@ -177,7 +215,10 @@ const AddExperienceForm = ({ onSuccess, onClose }) => {
 
         {/* Error */}
         {status === "error" && (
-          <div className="flex items-center gap-2 text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3 text-sm">
+          <div
+            role="status"
+            className="flex items-center gap-2 text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3 text-sm"
+          >
             <AlertCircle className="w-4 h-4 shrink-0" />
             {errorMsg}
           </div>
@@ -197,10 +238,10 @@ const AddExperienceForm = ({ onSuccess, onClose }) => {
             }`}
         >
           {status === "success" ? (
-            <>
+            <span role="status" className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4" />
               Experience Added!
-            </>
+            </span>
           ) : isLoading ? (
             <>
               <Loader />
@@ -214,31 +255,16 @@ const AddExperienceForm = ({ onSuccess, onClose }) => {
           )}
         </button>
       </form>
-
-      <style>{`
-        .input-field {
-          width: 100%;
-          background: #1a1a1a;
-          border: 1px solid #2a2a2a;
-          border-radius: 0.625rem;
-          padding: 0.625rem 0.875rem;
-          color: #e5e5e5;
-          font-size: 0.875rem;
-          outline: none;
-          transition: border-color 0.15s;
-          font-family: inherit;
-        }
-        .input-field::placeholder { color: #555; }
-        .input-field:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
-        .input-field:disabled { opacity: 0.5; cursor: not-allowed; }
-      `}</style>
     </div>
   );
 };
 
-const Field = ({ icon, label, required, children }) => (
+const Field = ({ icon, label, required, htmlFor, children }) => (
   <div>
-    <label className="flex items-center gap-1.5 text-xs font-medium text-neutral-400 uppercase tracking-wider mb-2">
+    <label
+      htmlFor={htmlFor}
+      className="flex items-center gap-1.5 text-xs font-medium text-neutral-400 uppercase tracking-wider mb-2"
+    >
       <span className="text-neutral-600">{icon}</span>
       {label}
       {required && <span className="text-blue-500 ml-0.5">*</span>}

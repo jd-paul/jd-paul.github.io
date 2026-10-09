@@ -34,10 +34,11 @@ export default function ImageOptimizerPage() {
   const idRef = useRef(0);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setAuthChecked(true);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => setSession(session))
+      .catch(() => {})
+      .finally(() => setAuthChecked(true));
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => setSession(session));
@@ -144,26 +145,31 @@ export default function ImageOptimizerPage() {
   const totalOptimized = items.reduce((s, i) => s + (i.optimizedSize ?? i.originalSize ?? 0), 0);
   const readyCount = items.filter((i) => i.status === "ready").length;
 
-  if (authChecked && !session) {
+  if (!authChecked) {
+    return <div className="min-h-screen bg-[#0a0a0a]" />;
+  }
+
+  if (!session) {
     return (
-      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center font-work-sans px-6 text-center">
-        <ImageIcon className="w-10 h-10 text-neutral-600 mb-4" />
+      <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center font-work-sans px-6 text-center">
+        <ImageIcon className="w-10 h-10 text-neutral-600 mb-4" aria-hidden="true" />
         <h1 className="text-2xl font-space-grotesk mb-2">Image Optimizer</h1>
         <p className="text-neutral-400 max-w-md">
           This tool is admin-only. Sign in from the home page sidebar ("Admin
           Login"), then come back.
         </p>
-        <Link to="/" className="no-underline mt-6">
-          <button className="flex items-center gap-1 border px-3 py-2.5 border-white text-white rounded-lg text-sm hover:bg-white hover:text-black transition">
-            Back Home <ArrowLeft className="w-4 h-4" />
-          </button>
+        <Link
+          to="/"
+          className="no-underline mt-6 flex items-center gap-1 border px-3 py-2.5 border-white text-white rounded-lg text-sm hover:bg-white hover:text-black transition"
+        >
+          Back Home <ArrowLeft className="w-4 h-4" aria-hidden="true" />
         </Link>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white font-work-sans">
+    <main id="main" className="min-h-screen bg-[#0a0a0a] text-white font-work-sans">
       <div className="max-w-4xl mx-auto px-6 py-10">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -173,10 +179,11 @@ export default function ImageOptimizerPage() {
               upload, then served from the <code>{PROJECT_THUMBNAILS_BUCKET}</code> bucket.
             </p>
           </div>
-          <Link to="/projects" className="no-underline shrink-0 ml-4">
-            <button className="flex items-center gap-1 border px-3 py-2.5 border-white text-white rounded-lg text-sm hover:bg-white hover:text-black transition">
-              Back <ArrowLeft className="w-4 h-4" />
-            </button>
+          <Link
+            to="/projects"
+            className="no-underline shrink-0 ml-4 flex items-center gap-1 border px-3 py-2.5 border-white text-white rounded-lg text-sm hover:bg-white hover:text-black transition"
+          >
+            Back <ArrowLeft className="w-4 h-4" aria-hidden="true" />
           </Link>
         </div>
 
@@ -221,11 +228,24 @@ export default function ImageOptimizerPage() {
         </div>
 
         <div
+          role="button"
+          tabIndex={0}
+          aria-label="Add images to optimize"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              fileInputRef.current?.click();
+            }
+          }}
           onDragOver={(e) => {
             e.preventDefault();
             setDragOver(true);
           }}
-          onDragLeave={() => setDragOver(false)}
+          onDragLeave={(e) => {
+            // Ignore leave events fired when the pointer crosses child elements.
+            if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget)) return;
+            setDragOver(false);
+          }}
           onDrop={(e) => {
             e.preventDefault();
             setDragOver(false);
@@ -238,7 +258,7 @@ export default function ImageOptimizerPage() {
               : "border-neutral-700 hover:border-neutral-500"
           }`}
         >
-          <UploadCloud className="w-8 h-8 mx-auto text-neutral-500 mb-2" />
+          <UploadCloud className="w-8 h-8 mx-auto text-neutral-500 mb-2" aria-hidden="true" />
           <p className="text-neutral-300 text-sm">
             Drop images here or click to choose files
           </p>
@@ -267,6 +287,7 @@ export default function ImageOptimizerPage() {
               <div className="flex gap-2">
                 {readyCount > 0 && (
                   <button
+                    type="button"
                     onClick={uploadAll}
                     className="bg-blue-600 px-4 py-2 rounded-lg text-sm hover:bg-blue-500 transition"
                   >
@@ -274,6 +295,7 @@ export default function ImageOptimizerPage() {
                   </button>
                 )}
                 <button
+                  type="button"
                   onClick={() => {
                     items.forEach((i) => i.previewUrl && URL.revokeObjectURL(i.previewUrl));
                     setItems([]);
@@ -296,7 +318,7 @@ export default function ImageOptimizerPage() {
                     />
                   ) : (
                     <div className="w-14 h-14 rounded-lg bg-neutral-800 flex items-center justify-center shrink-0">
-                      <ImageIcon className="w-5 h-5 text-neutral-600" />
+                      <ImageIcon className="w-5 h-5 text-neutral-600" aria-hidden="true" />
                     </div>
                   )}
 
@@ -319,11 +341,12 @@ export default function ImageOptimizerPage() {
                     {item.error && <p className="text-xs text-red-400 mt-1">{item.error}</p>}
                     {item.publicUrl && (
                       <button
+                        type="button"
                         onClick={() => copyUrl(item.publicUrl)}
                         className="text-xs text-blue-400 hover:text-blue-300 mt-1 flex items-center gap-1 truncate"
                         title={item.publicUrl}
                       >
-                        <Copy className="w-3 h-3 shrink-0" />
+                        <Copy className="w-3 h-3 shrink-0" aria-hidden="true" />
                         <span className="truncate">{item.publicUrl}</span>
                       </button>
                     )}
@@ -345,19 +368,27 @@ export default function ImageOptimizerPage() {
 
                   {item.status === "ready" && (
                     <button
+                      type="button"
                       onClick={() => uploadItem(item.id)}
                       className="bg-blue-600 px-3 py-1.5 rounded-lg text-xs hover:bg-blue-500 transition shrink-0"
                     >
                       Upload
                     </button>
                   )}
-                  {item.status === "uploaded" && <Check className="w-4 h-4 text-green-400 shrink-0" />}
+                  {item.status === "uploaded" && (
+                    <Check className="w-4 h-4 text-green-400 shrink-0" aria-hidden="true" />
+                  )}
                   <button
+                    type="button"
                     onClick={() => removeItem(item.id)}
                     aria-label={`Remove ${item.name}`}
                     className="text-neutral-500 hover:text-white transition shrink-0"
                   >
-                    {item.status === "error" ? <X className="w-4 h-4" /> : <Trash2 className="w-4 h-4" />}
+                    {item.status === "error" ? (
+                      <X className="w-4 h-4" aria-hidden="true" />
+                    ) : (
+                      <Trash2 className="w-4 h-4" aria-hidden="true" />
+                    )}
                   </button>
                 </li>
               ))}
@@ -365,6 +396,6 @@ export default function ImageOptimizerPage() {
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 }

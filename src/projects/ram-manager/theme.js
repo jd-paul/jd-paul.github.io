@@ -22,7 +22,7 @@ export const PROJECT = {
     "A lightweight Chrome extension that suspends idle tabs to free up memory. Tabs are preserved and can be restored instantly when you return.",
   tools: "JavaScript, Chrome Extension APIs, HTML, CSS",
   project_link: "https://github.com/jd-paul/ram-manager",
-  image_url: "/img_ram_manager.png",
+  image_url: "/img_ram_manager.webp",
   genre: "Projects",
 };
 
