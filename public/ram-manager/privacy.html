@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — RAM Manager | John Paul San Diego</title>
+  <meta name="description" content="How the RAM Manager Chrome extension handles your data: no data collection, everything stored locally, and a plain-English explanation of every Chrome permission." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-primary: rgb(255, 255, 255);
+      --bg-secondary: rgb(244, 245, 246);
+      --text-normal: rgb(55, 53, 47);
+      --text-muted: rgb(77, 74, 66);
+      --text-faint: rgb(99, 95, 84);
+      --accent: rgb(11, 110, 153);
+      --accent-hover: rgb(8, 82, 115);
+      --accent-light: rgba(11, 110, 153, 0.12);
+      --border-light: rgb(227, 230, 232);
+      --success: rgb(15, 123, 108);
+      --danger: rgb(224, 62, 62);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg-primary);
+      color: var(--text-normal);
+      font-family: "Work Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+    }
+    main { max-width: 768px; margin: 0 auto; padding: 48px 24px; }
+    @media (min-width: 1024px) { main { padding: 64px 24px; } }
+
+    h1, h2, h3 { font-family: "Space Grotesk", "Work Sans", sans-serif; }
+    h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 16px; }
+    h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 16px; }
+    .subtitle { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; }
+    @media (min-width: 768px) { h1 { font-size: 3rem; } .subtitle { font-size: 1.5rem; } }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .breadcrumb { font-size: 0.875rem; color: var(--text-faint); margin-bottom: 24px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+    .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-size: 0.875rem; color: var(--text-faint); }
+    .chip { padding: 4px 12px; border-radius: 9999px; background: var(--bg-secondary); color: var(--text-muted); }
+
+    section { margin-bottom: 48px; }
+
+    .hero {
+      padding: 24px;
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      border-left: 4px solid var(--success);
+      margin-bottom: 48px;
+    }
+    .hero h2 { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .hero p { font-size: 1.125rem; color: var(--text-muted); }
+    .hero strong { color: var(--text-normal); }
+
+    ul.ticks { list-style: none; }
+    ul.ticks li { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+    ul.ticks li::before {
+      content: "";
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      margin-top: 10px;
+      flex-shrink: 0;
+    }
+
+    .card {
+      padding: 16px;
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-light);
+      margin-bottom: 12px;
+    }
+    .card code { font-size: 0.875rem; font-weight: 600; color: var(--text-normal); }
+    .card p { font-size: 0.875rem; color: var(--text-muted); margin-top: 4px; }
+    .card p.note { color: var(--text-faint); margin-top: 4px; }
+
+    .perm {
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid var(--border-light);
+      margin-bottom: 12px;
+    }
+    .perm .head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+    .perm .tag {
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--accent-light);
+      color: var(--accent);
+      font-size: 0.875rem;
+      font-weight: 600;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .perm .label { font-size: 0.875rem; font-weight: 500; }
+    .perm p { color: var(--text-muted); }
+
+    .never {
+      padding: 24px;
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      border-left: 4px solid var(--danger);
+      margin-bottom: 48px;
+    }
+    .never h2 { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .never p { color: var(--text-muted); }
+
+    .favicon-box { display: flex; gap: 12px; padding: 16px; border-radius: 8px; background: var(--bg-secondary); }
+    .favicon-box p { color: var(--text-muted); }
+
+    .btn {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff !important;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    .btn:hover { background: var(--accent-hover); text-decoration: none; }
+
+    footer { padding-top: 32px; border-top: 1px solid var(--border-light); font-weight: 500; }
+  </style>
+</head>
+<body>
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/#/projects">Projects</a>
+      <span>/</span>
+      <a href="/#/projects/ram-manager">RAM Manager</a>
+      <span>/</span>
+      <span>Privacy</span>
+    </nav>
+
+    <header>
+      <h1>Privacy Policy</h1>
+      <p class="subtitle">How RAM Manager handles your data — in plain language.</p>
+      <div class="meta">
+        <span class="chip">Version 1.1.0</span>
+        <span>Last updated: October 9, 2026</span>
+      </div>
+    </header>
+
+    <div class="hero">
+      <h2>No data collection</h2>
+      <p>
+        RAM Manager does <strong>not collect any personal data</strong>. We do not track you, we do not
+        transmit information to external servers, and we do not use analytics or telemetry. The extension
+        works entirely offline and all functionality runs locally on your device.
+      </p>
+    </div>
+
+    <section>
+      <h2>The short version</h2>
+      <ul class="ticks">
+        <li>No analytics, no telemetry, no tracking of any kind.</li>
+        <li>No remote servers — the extension makes zero network calls of its own.</li>
+        <li>Everything it remembers lives in your own browser's storage, on your device.</li>
+        <li>No ads, no data brokers, and your data is never sold.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>What is stored locally</h2>
+      <p style="color: var(--text-muted); margin-bottom: 16px;">
+        The only data the extension keeps is a small amount of JSON inside your own browser storage:
+      </p>
+
+      <div class="card">
+        <code>chrome.storage.sync</code>
+        <p>Your settings, whitelist, and theme choice.</p>
+        <p class="note">Synced between your own devices by Chrome's built-in sync if you're signed in — never sent to us.</p>
+      </div>
+      <div class="card">
+        <code>chrome.storage.local</code>
+        <p>Suspension history (capped at 500 entries), frozen-tab metadata, idle timers, saved sessions (capped at 20), memory-saved estimates.</p>
+        <p class="note">Stays on this device only.</p>
+      </div>
+      <div class="card">
+        <code>chrome.storage.session</code>
+        <p>Keep-awake holds you set from the popup.</p>
+        <p class="note">Wiped automatically when the browser restarts.</p>
+      </div>
+      <div class="card">
+        <code>localStorage</code>
+        <p>Cached light/dark class so pages don't flash the wrong theme; popup section open/closed state.</p>
+        <p class="note">Page-appearance cache only, on this device.</p>
+      </div>
+
+      <p style="font-size: 0.875rem; color: var(--text-faint); margin-top: 16px;">
+        If you are signed into Chrome with sync enabled, Chrome itself may roam your settings between your
+        devices — that is Chrome's built-in sync, and it never touches any server of ours.
+      </p>
+    </section>
+
+    <section>
+      <h2>You control your data</h2>
+      <p style="color: var(--text-muted);">
+        You can export your data as JSON, import it back, or clear stats and history at any time from the
+        extension's settings. Because nothing is ever sent to us, there is nothing for us to delete on your
+        behalf — uninstalling the extension removes everything it stored.
+      </p>
+    </section>
+
+    <section>
+      <h2>Permissions explained</h2>
+      <p style="color: var(--text-muted); margin-bottom: 16px;">
+        Chrome lists every permission an extension requests at install time. Here is exactly what each one
+        is for, and why it is needed:
+      </p>
+
+      <div class="perm">
+        <div class="head"><span class="tag">tabs</span><span class="label">Read your tabs</span></div>
+        <p>
+          Used to read tab URLs, titles, and states (audible, pinned, active) so the extension can tell which
+          tabs are idle and safe to suspend — and to render the tab list in the popup. The only write it ever
+          makes is navigating a tab to, and back from, the suspended page. That navigation is the entire product.
+        </p>
+      </div>
+      <div class="perm">
+        <div class="head"><span class="tag">storage</span><span class="label">Store data locally</span></div>
+        <p>
+          Persists your settings, whitelist, and theme, plus the local-only history and stats shown on the
+          dashboard. Nothing written through this permission is ever transmitted anywhere.
+        </p>
+      </div>
+      <div class="perm">
+        <div class="head"><span class="tag">alarms</span><span class="label">Run on a schedule</span></div>
+        <p>
+          A one-minute heartbeat that checks which tabs have passed their idle threshold. It only runs while
+          auto-suspend is enabled — the feature is off by default.
+        </p>
+      </div>
+      <div class="perm">
+        <div class="head"><span class="tag">contextMenus</span><span class="label">Add right-click menu items</span></div>
+        <p>Adds the "Suspend this tab" and "Suspend other tabs" entries to Chrome's right-click menu. Nothing more.</p>
+      </div>
+      <div class="perm">
+        <div class="head"><span class="tag">scripting</span><span class="label">Inject scripts on demand</span></div>
+        <p>
+          A small, local script (shipped inside the extension, never from the internet) is injected into a
+          page only in the instant before an automatic suspension. It draws an on-page warning banner with a
+          "Not now" button, and — only if you enable Form Protection — checks whether a page has unsaved form
+          input. It is never injected at install, never on every page, collects nothing, and cannot execute
+          remote code (the extension's content security policy is script-src 'self').
+        </p>
+      </div>
+      <div class="perm">
+        <div class="head"><span class="tag">&lt;all_urls&gt;</span><span class="label">Access to sites — optional, off by default</span></div>
+        <p>
+          This optional permission is requested only at the moment you enable Form Protection, so the
+          unsaved-form check can actually inspect page content. Without it, Form Protection falls back to a
+          URL-pattern heuristic and every other feature works unchanged. You can revoke it at any time from
+          chrome://extensions &rarr; RAM Manager &rarr; Details.
+        </p>
+      </div>
+    </section>
+
+    <div class="never">
+      <h2>What we never do</h2>
+      <p>
+        We never sell your data, never show ads, never fingerprint your device, and never load code from a
+        content delivery network. Every line of code that runs ships inside the extension package you
+        installed, and you can read all of it on
+        <a href="https://github.com/jd-paul/ram-manager">GitHub</a>.
+      </p>
+    </div>
+
+    <section>
+      <h2>Favicon loading</h2>
+      <div class="favicon-box">
+        <p>
+          When a tab is suspended, the placeholder page may load the original site's favicon so it can display
+          it. This is an ordinary image request — the same as your browser makes when you visit the site
+          yourself. No remote code is executed and no information about you is sent.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Contact</h2>
+      <p style="color: var(--text-muted);">
+        Questions or concerns about privacy? Email
+        <a href="mailto:johnpaul20030@gmail.com">johnpaul20030@gmail.com</a> and we will answer personally.
+      </p>
+    </section>
+
+    <footer>
+      <a href="/#/projects/ram-manager">&larr; Back to RAM Manager</a>
+    </footer>
+  </main>
+</body>
+</html>
