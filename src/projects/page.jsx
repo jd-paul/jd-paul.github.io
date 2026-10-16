@@ -70,20 +70,12 @@ const LandingPage = () => {
 
               <div className="flex gap-3">
                 {session && (
-                  <>
-                    <Link
-                      to="/admin/image-optimizer"
-                      className="no-underline bg-neutral-800 px-4 py-2 rounded-lg text-sm hover:bg-neutral-700 transition"
-                    >
-                      Optimize Images
-                    </Link>
-                    <button
-                      onClick={handleToggleForm}
-                      className="bg-blue-600 px-4 py-2 rounded-lg text-sm hover:bg-blue-500 transition"
-                    >
-                      {showForm ? "Close Form" : "Add Project"}
-                    </button>
-                  </>
+                  <button
+                    onClick={handleToggleForm}
+                    className="bg-blue-600 px-4 py-2 rounded-lg text-sm hover:bg-blue-500 transition"
+                  >
+                    {showForm ? "Close Form" : "Add Project"}
+                  </button>
                 )}
 
                 <Link

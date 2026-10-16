@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { GENRE_LABELS } from "../lib/projectLabels";
-import { uploadProjectThumbnail } from "../lib/storage";
+import { prepareProjectThumbnail, uploadProjectThumbnail } from "../lib/storage";
 import {
   Upload,
   X,
@@ -35,13 +35,15 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
     display_order: "",
     genre: "Projects",
   });
-  const [imageFile, setImageFile] = useState(null);
+  const [preparedImage, setPreparedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [imageStatus, setImageStatus] = useState("idle");
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
   const [errorMsg, setErrorMsg] = useState("");
 
   const fileInputRef = useRef(null);
   const objectUrlRef = useRef(null); // track blob URL for cleanup
+  const imageSelectionRef = useRef(0);
   const timeoutRef = useRef(null);
   const mountedRef = useRef(true);
 
@@ -58,7 +60,7 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleImageSelect = (file) => {
+  const handleImageSelect = async (file) => {
     if (!file || !file.type.startsWith("image/")) return;
 
     if (file.size > MAX_FILE_SIZE) {
@@ -67,15 +69,37 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
       return;
     }
 
+    const selectionId = ++imageSelectionRef.current;
+
     // Revoke previous blob URL before creating a new one
     if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
     const url = URL.createObjectURL(file);
     objectUrlRef.current = url;
 
-    setImageFile(file);
+    setPreparedImage(null);
     setImagePreview(url);
+    setImageStatus("optimizing");
     setErrorMsg("");
     if (status === "error") setStatus("idle");
+
+    try {
+      const prepared = await prepareProjectThumbnail(file);
+      if (!mountedRef.current || selectionId !== imageSelectionRef.current) return;
+
+      if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+      const optimizedUrl = URL.createObjectURL(prepared.blob);
+      objectUrlRef.current = optimizedUrl;
+
+      setPreparedImage(prepared);
+      setImagePreview(optimizedUrl);
+      setImageStatus("ready");
+    } catch (err) {
+      if (!mountedRef.current || selectionId !== imageSelectionRef.current) return;
+      setPreparedImage(null);
+      setImageStatus("error");
+      setStatus("error");
+      setErrorMsg(err.message || "Could not optimize this image.");
+    }
   };
 
   const handleImageDrop = (e) => {
@@ -85,20 +109,29 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
 
   const handleFileInput = (e) => {
     handleImageSelect(e.target.files[0]);
+    e.target.value = "";
   };
 
   const clearImage = () => {
+    imageSelectionRef.current += 1;
     if (objectUrlRef.current) {
       URL.revokeObjectURL(objectUrlRef.current);
       objectUrlRef.current = null;
     }
-    setImageFile(null);
+    setPreparedImage(null);
     setImagePreview(null);
+    setImageStatus("idle");
+    if (imageStatus === "error") {
+      setStatus("idle");
+      setErrorMsg("");
+    }
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (imageStatus === "optimizing" || imageStatus === "error") return;
 
     if (!form.title.trim() || !form.description.trim() || !form.tools.trim()) {
       return;
@@ -127,9 +160,8 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
     try {
       let image_url = null;
 
-      if (imageFile) {
-        // Optimized (WebP + downscaled) and uploaded via the shared helper.
-        const uploaded = await uploadProjectThumbnail(imageFile);
+      if (preparedImage) {
+        const uploaded = await uploadProjectThumbnail(preparedImage);
         image_url = uploaded.publicUrl;
       }
 
@@ -245,6 +277,19 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
             className="hidden"
             onChange={handleFileInput}
           />
+          {imageStatus === "optimizing" && (
+            <p role="status" className="mt-2 flex items-center gap-2 text-xs text-blue-400">
+              <Loader />
+              Optimizing image…
+            </p>
+          )}
+          {imageStatus === "ready" && (
+            <p role="status" className="mt-2 text-xs text-green-400">
+              {preparedImage?.converted
+                ? "Image optimized automatically."
+                : "Image ready — original kept."}
+            </p>
+          )}
         </div>
 
         {/* Name */}
@@ -380,12 +425,17 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
         {/* Submit */}
         <button
           type="submit"
-          disabled={isLoading || status === "success"}
+          disabled={
+            isLoading ||
+            status === "success" ||
+            imageStatus === "optimizing" ||
+            imageStatus === "error"
+          }
           className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-all duration-200
             ${
               status === "success"
                 ? "bg-green-600 text-white cursor-default"
-                : isLoading
+                : isLoading || imageStatus === "optimizing"
                   ? "bg-blue-600/50 text-white/60 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-500 text-white active:scale-[0.98]"
             }`}
@@ -399,6 +449,11 @@ const AddProjectForm = ({ onSuccess, onClose }) => {
             <>
               <Loader />
               Uploading...
+            </>
+          ) : imageStatus === "optimizing" ? (
+            <>
+              <Loader />
+              Optimizing image…
             </>
           ) : (
             <>

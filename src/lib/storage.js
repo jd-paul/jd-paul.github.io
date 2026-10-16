@@ -19,16 +19,26 @@ export async function uploadToBucket(objectName, blob, options = {}) {
   return data.publicUrl;
 }
 
-// High-level: optimize an image file in the browser (WebP + downscale) and
-// upload it. Falls back to the original bytes when WebP is unavailable.
-export async function uploadProjectThumbnail(file, optimizeOptions = {}) {
-  const { blob, converted } = await optimizeImage(file, optimizeOptions);
+// Prepare at selection time so publishing only uploads the resulting bytes.
+export async function prepareProjectThumbnail(file, optimizeOptions = {}) {
+  const optimized = await optimizeImage(file, optimizeOptions);
   // Sanitize the fallback extension the same way webpObjectName sanitizes
   // the base name — never interpolate the raw file name into storage paths.
   const ext = (file.name.split(".").pop() || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-  const objectName = converted ? webpObjectName(file.name) : `${Date.now()}.${ext || "bin"}`;
-  const publicUrl = await uploadToBucket(objectName, blob, {
-    contentType: converted ? "image/webp" : file.type,
+  const objectName = optimized.converted
+    ? webpObjectName(file.name)
+    : `${Date.now()}.${ext || "bin"}`;
+
+  return {
+    ...optimized,
+    objectName,
+    contentType: optimized.converted ? "image/webp" : file.type,
+  };
+}
+
+export async function uploadProjectThumbnail(prepared) {
+  const publicUrl = await uploadToBucket(prepared.objectName, prepared.blob, {
+    contentType: prepared.contentType,
   });
-  return { publicUrl, converted, objectName };
+  return { ...prepared, publicUrl };
 }

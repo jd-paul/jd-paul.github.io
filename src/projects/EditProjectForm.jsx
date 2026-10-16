@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { GENRE_LABELS } from "../lib/projectLabels";
-import { uploadProjectThumbnail } from "../lib/storage";
+import { prepareProjectThumbnail, uploadProjectThumbnail } from "../lib/storage";
 import {
   Upload,
   X,
@@ -36,16 +36,18 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
     display_order: project.display_order ?? "",
     genre: project.genre ?? "Projects",
   });
-  const [imageFile, setImageFile] = useState(null);
+  const [preparedImage, setPreparedImage] = useState(null);
   // imagePreview may be a remote URL (project.image_url) or a blob URL we created.
   // Only blob URLs we create should be revoked on cleanup.
   const [imagePreview, setImagePreview] = useState(project.image_url ?? null);
+  const [imageStatus, setImageStatus] = useState("idle");
   const [status, setStatus] = useState("idle"); // idle | loading | success | deleting | deleted | error
   const [errorMsg, setErrorMsg] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const fileInputRef = useRef(null);
   const blobUrlRef = useRef(null);  // tracks only blob URLs we created
+  const imageSelectionRef = useRef(0);
   const timeoutRef = useRef(null);
   const mountedRef = useRef(true);
 
@@ -62,7 +64,7 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleImageSelect = (file) => {
+  const handleImageSelect = async (file) => {
     if (!file || !file.type.startsWith("image/")) return;
 
     if (file.size > MAX_FILE_SIZE) {
@@ -71,15 +73,37 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
       return;
     }
 
+    const selectionId = ++imageSelectionRef.current;
+
     // Revoke previous blob URL (if any) before creating a new one
     if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current);
     const url = URL.createObjectURL(file);
     blobUrlRef.current = url;
 
-    setImageFile(file);
+    setPreparedImage(null);
     setImagePreview(url);
+    setImageStatus("optimizing");
     setErrorMsg("");
     if (status === "error") setStatus("idle");
+
+    try {
+      const prepared = await prepareProjectThumbnail(file);
+      if (!mountedRef.current || selectionId !== imageSelectionRef.current) return;
+
+      if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current);
+      const optimizedUrl = URL.createObjectURL(prepared.blob);
+      blobUrlRef.current = optimizedUrl;
+
+      setPreparedImage(prepared);
+      setImagePreview(optimizedUrl);
+      setImageStatus("ready");
+    } catch (err) {
+      if (!mountedRef.current || selectionId !== imageSelectionRef.current) return;
+      setPreparedImage(null);
+      setImageStatus("error");
+      setStatus("error");
+      setErrorMsg(err.message || "Could not optimize this image.");
+    }
   };
 
   const handleImageDrop = (e) => {
@@ -89,16 +113,23 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
 
   const handleFileInput = (e) => {
     handleImageSelect(e.target.files[0]);
+    e.target.value = "";
   };
 
   const clearImage = () => {
+    imageSelectionRef.current += 1;
     // Only revoke if it's a blob URL we created
     if (blobUrlRef.current) {
       URL.revokeObjectURL(blobUrlRef.current);
       blobUrlRef.current = null;
     }
-    setImageFile(null);
+    setPreparedImage(null);
     setImagePreview(null);
+    setImageStatus("idle");
+    if (imageStatus === "error") {
+      setStatus("idle");
+      setErrorMsg("");
+    }
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -111,6 +142,8 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+
+    if (imageStatus === "optimizing" || imageStatus === "error") return;
 
     if (!form.title.trim() || !form.description.trim() || !form.tools.trim()) {
       return;
@@ -137,9 +170,8 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
     try {
       let image_url = project.image_url;
 
-      if (imageFile) {
-        // Optimized (WebP + downscaled) and uploaded via the shared helper.
-        const uploaded = await uploadProjectThumbnail(imageFile);
+      if (preparedImage) {
+        const uploaded = await uploadProjectThumbnail(preparedImage);
         image_url = uploaded.publicUrl;
       } else if (!imagePreview) {
         image_url = null;
@@ -277,6 +309,19 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
             className="hidden"
             onChange={handleFileInput}
           />
+          {imageStatus === "optimizing" && (
+            <p role="status" className="mt-2 flex items-center gap-2 text-xs text-blue-400">
+              <Loader />
+              Optimizing image…
+            </p>
+          )}
+          {imageStatus === "ready" && (
+            <p role="status" className="mt-2 text-xs text-green-400">
+              {preparedImage?.converted
+                ? "Image optimized automatically."
+                : "Image ready — original kept."}
+            </p>
+          )}
         </div>
 
         {/* Name */}
@@ -447,12 +492,18 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
 
           <button
             type="submit"
-            disabled={isLoading || status === "success" || status === "deleted"}
+            disabled={
+              isLoading ||
+              status === "success" ||
+              status === "deleted" ||
+              imageStatus === "optimizing" ||
+              imageStatus === "error"
+            }
             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-all duration-200
               ${
                 status === "success" || status === "deleted"
                   ? "bg-green-600 text-white cursor-default"
-                  : isLoading
+                  : isLoading || imageStatus === "optimizing"
                     ? "bg-blue-600/50 text-white/60 cursor-not-allowed"
                     : "bg-blue-600 hover:bg-blue-500 text-white active:scale-[0.98]"
               }`}
@@ -471,6 +522,11 @@ const EditProjectForm = ({ project, onSuccess, onClose }) => {
               <>
                 <Loader />
                 Saving...
+              </>
+            ) : imageStatus === "optimizing" ? (
+              <>
+                <Loader />
+                Optimizing image…
               </>
             ) : (
               <>
