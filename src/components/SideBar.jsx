@@ -4,17 +4,30 @@ import { Github, Linkedin, ShieldUser, LogOut } from "lucide-react";
 import Selfie from "../assets/img/img_profile.webp";
 import CssGridBackground from "./CssGridBackground";
 import { supabase } from "../lib/supabaseClient";
+import { getAdminSession } from "../lib/adminAuth";
 
 const Sidebar = () => {
   const [session, setSession] = useState(null);
+  const [authError, setAuthError] = useState("");
   useEffect(() => {
+    const handleSession = (nextSession) => {
+      const adminSession = getAdminSession(nextSession);
+      setSession(adminSession);
+      if (nextSession && !adminSession) {
+        setAuthError("Admin access is restricted to the site owner.");
+        supabase.auth.signOut();
+      } else if (adminSession) {
+        setAuthError("");
+      }
+    };
+
     supabase.auth
       .getSession()
-      .then(({ data: { session } }) => setSession(session));
+      .then(({ data: { session } }) => handleSession(session));
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) =>
-      setSession(session),
+      handleSession(session),
     );
     return () => subscription.unsubscribe();
   }, []);
@@ -23,10 +36,11 @@ const Sidebar = () => {
     if (session) {
       await supabase.auth.signOut();
     } else {
-      await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: "github",
         options: { redirectTo: window.location.origin },
       });
+      if (error) setAuthError("Admin access is restricted to the site owner.");
     }
   };
 
@@ -98,6 +112,8 @@ const Sidebar = () => {
             <button
               type="button"
               onClick={handleAuth}
+              aria-label={session ? "Admin logout" : "Admin login"}
+              title={session ? "Admin logout" : "Admin login"}
               className="text-gray-400 text-sm hover:text-white transition flex items-center gap-3"
             >
               {session ? (
@@ -106,12 +122,14 @@ const Sidebar = () => {
                   Logout
                 </>
               ) : (
-                <>
-                  <ShieldUser className="w-5 h-5" />
-                  Admin Login
-                </>
+                <ShieldUser className="w-5 h-5" />
               )}
             </button>
+            {authError && (
+              <p role="alert" className="text-gray-400 text-xs max-w-48">
+                {authError}
+              </p>
+            )}
           </div>
         </div>
       </div>

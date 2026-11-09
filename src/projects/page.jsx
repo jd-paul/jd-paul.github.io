@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 import { useProjects } from "../hooks/useProjects";
 import { getGenreLabel } from "../lib/projectLabels";
+import { getAdminSession } from "../lib/adminAuth";
 
 // Genre sections in display order
 const GENRE_ORDER = ["Clients", "Open Source", "Contributions", "Projects"];
@@ -47,13 +48,13 @@ const LandingPage = () => {
   useEffect(() => {
     supabase.auth
       .getSession()
-      .then(({ data: { session } }) => setSession(session))
+      .then(({ data: { session } }) => setSession(getAdminSession(session)))
       .catch(() => {});
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+      setSession(getAdminSession(session));
     });
 
     return () => subscription.unsubscribe();

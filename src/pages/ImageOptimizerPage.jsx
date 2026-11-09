@@ -12,6 +12,7 @@ import {
 import { supabase } from "../lib/supabaseClient";
 import { optimizeImage, webpObjectName, formatKB } from "../lib/optimizeImage";
 import { PROJECT_THUMBNAILS_BUCKET, uploadToBucket } from "../lib/storage";
+import { getAdminSession } from "../lib/adminAuth";
 
 const MAX_WIDTHS = [800, 1200, 1600, 1920];
 
@@ -36,12 +37,12 @@ export default function ImageOptimizerPage() {
   useEffect(() => {
     supabase.auth
       .getSession()
-      .then(({ data: { session } }) => setSession(session))
+      .then(({ data: { session } }) => setSession(getAdminSession(session)))
       .catch(() => {})
       .finally(() => setAuthChecked(true));
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => setSession(session));
+    } = supabase.auth.onAuthStateChange((_event, session) => setSession(getAdminSession(session)));
     return () => subscription.unsubscribe();
   }, []);
 

@@ -39,6 +39,7 @@ import { useProjects } from "../hooks/useProjects";
 import { useExperience } from "../hooks/useExperience";
 import { supabase } from "../lib/supabaseClient";
 import { DEBUG_ADMIN } from "../lib/debugAdmin";
+import { getAdminSession } from "../lib/adminAuth";
 
 // Static data lives at module scope — created once, never re-created on render
 const TECH_STACK = [
@@ -89,13 +90,13 @@ const Section1 = () => {
   useEffect(() => {
     supabase.auth
       .getSession()
-      .then(({ data: { session } }) => setSession(session))
+      .then(({ data: { session } }) => setSession(getAdminSession(session)))
       .catch(() => {});
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+      setSession(getAdminSession(session));
     });
 
     return () => subscription.unsubscribe();
