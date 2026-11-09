@@ -78,7 +78,6 @@ const Sidebar = () => {
 
         {/* Social Links */}
         <div className="space-y-4 mt-auto">
-          {/* Social Links & Admin Login Side-to-Side */}
           <nav aria-label="Social profiles">
             <div className="flex items-center gap-6">
               <a

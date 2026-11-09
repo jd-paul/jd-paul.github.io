@@ -156,8 +156,8 @@ export default function ImageOptimizerPage() {
         <ImageIcon className="w-10 h-10 text-neutral-600 mb-4" aria-hidden="true" />
         <h1 className="text-2xl font-space-grotesk mb-2">Image Optimizer</h1>
         <p className="text-neutral-400 max-w-md">
-          This tool is admin-only. Sign in from the home page sidebar ("Admin
-          Login"), then come back.
+          This tool is admin-only. Sign in using the admin control in the home
+          page sidebar, then come back.
         </p>
         <Link
           to="/"
