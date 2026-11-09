@@ -22,19 +22,11 @@ create policy "experience_select_all" on public.experience
   for select to anon, authenticated
   using (true);
 
--- Writes restricted to signed-in users (site admin)
-create policy "experience_insert_authenticated" on public.experience
-  for insert to authenticated
-  with check (true);
-
-create policy "experience_update_authenticated" on public.experience
-  for update to authenticated
-  using (true)
-  with check (true);
-
-create policy "experience_delete_authenticated" on public.experience
-  for delete to authenticated
-  using (true);
+-- Writes restricted to the portfolio admin
+create policy "experience_admin_all" on public.experience
+  for all to authenticated
+  using ((select auth.uid()) = '36b34aa4-4047-42f1-bdbf-295c5dfe4706'::uuid)
+  with check ((select auth.uid()) = '36b34aa4-4047-42f1-bdbf-295c5dfe4706'::uuid);
 
 -- Seed data (source of truth: kApply/Resume/LaTeX/Master/work-experience.tex)
 insert into public.experience (role, company, dates, highlights, display_order) values
@@ -55,13 +47,13 @@ insert into public.experience (role, company, dates, highlights, display_order) 
   (
     'Lead Full Stack Developer',
     'KCL Tech',
-    'Sep 2024 – Present',
+    'Sep 2024 – Sep 2026',
     'Redesigned the society platform with TypeScript and MongoDB (+30% engagement, 1,200+ monthly views). Organised Tech Summit 2025 (1,300+ sign-ups) and Hack London 2026 (600+ competitors).',
     3
   ),
   (
     'Full Stack Developer',
-    'SmileShot (Cambridge Accelerate)',
+    'SmileShot',
     'Dec 2024 – May 2025',
     'Built a Google Drive-style image and file management platform on Azure Cosmos DB for a DentalTech startup — including a bulk upload pipeline reliably processing 100 images per batch.',
     4
@@ -69,7 +61,7 @@ insert into public.experience (role, company, dates, highlights, display_order) 
   (
     'AV & IT Support Technician',
     'King''s College London',
-    'Sep 2024 – Present',
+    'Sep 2024 – Sep 2026',
     'Support 600+ teaching and event spaces across King''s campuses, delivering live AV for 70+ events weekly and first-line IT support for 500+ students.',
     5
   );
